@@ -1,8 +1,10 @@
 <?php
 
+namespace CustomWooCommerceRedis;
+
 require 'vendor/autoload.php';
 
-use src\Interfaces\IRedisClient;
+use CustomWooCommerceRedis\Interfaces\IRedisClient;
 use Predis\Client;
 
 class RedisClient implements IRedisClient {
@@ -11,7 +13,7 @@ class RedisClient implements IRedisClient {
     public function __construct() {
         $this->redisConnection = new Client([
             'scheme' => 'tcp',
-            'host'   => '127.0.0.1',
+            'host'   => 'redis', // Verander naar 'redis' als je de Docker Redis service gebruikt
             'port'   => 6379,
         ]);
     }
@@ -29,4 +31,3 @@ class RedisClient implements IRedisClient {
         return $this->redisConnection->del([$key]) > 0;
     }
 }
-

@@ -3,16 +3,17 @@
 Plugin Name: Custom WooCommerce Redis Integration
 Description: Een aangepaste plugin om WooCommerce productgegevens en winkelwageninformatie in Redis te cachen.
 Version: 1.0
-Author: Anouar
+Author: A
 */
 
-require_once 'IRedisClient.php';
-require_once 'RedisClient.php';
-require_once 'CustomPlugin.php';
+require_once plugin_dir_path(__FILE__) . 'src/interfaces/IRedisClient.php';
+require_once plugin_dir_path(__FILE__) . 'src/RedisClient.php';
+require_once plugin_dir_path(__FILE__) . 'src/CustomPlugin.php';
 
 function init_custom_plugin() {
-    $redisClient = new RedisClient();
-    $customPlugin = new CustomPlugin($redisClient);
+    $redisClient = new CustomWooCommerceRedis\RedisClient();
+    $customPlugin = new CustomWooCommerceRedis\CustomPlugin($redisClient);
+    return $customPlugin;
 }
 
 add_action('plugins_loaded', 'init_custom_plugin');
