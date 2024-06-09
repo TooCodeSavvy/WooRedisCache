@@ -1,0 +1,10 @@
+sudo rm -r -d vendor/
+sudo rm -r wp-links-opml.php wp-mail.php wp-settings.php wp-signup.php wp-trackback.php xmlrpc.php 
+sudo rm -r .htaccess 
+sudo rm -r index.php wp-config-docker.php wp-config-sample.php wp-cron.php wp-load.php wp-login.php 
+sudo rm -r wp-activate.php wp-blog-header.php wp-comments-post.php wp-config.php 
+sudo rm -r readme.html license.txt 
+sudo rm -d -r wp-includes/ wp-content/ wp-admin/
+
+
+

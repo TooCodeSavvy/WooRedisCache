@@ -6,9 +6,9 @@ Version: 1.0
 Author: A
 */
 
-require_once plugin_dir_path(__FILE__) . 'src/interfaces/IRedisClient.php';
-require_once plugin_dir_path(__FILE__) . 'src/RedisClient.php';
-require_once plugin_dir_path(__FILE__) . 'src/CustomPlugin.php';
+require_once plugin_dir_path(__FILE__) . '/interfaces/IRedisClient.php';
+require_once plugin_dir_path(__FILE__) . '/RedisClient.php';
+require_once plugin_dir_path(__FILE__) . '/CustomPlugin.php';
 
 function init_custom_plugin() {
     $redisClient = new CustomWooCommerceRedis\RedisClient();
