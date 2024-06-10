@@ -1,19 +1,20 @@
 # Gebruik de officiële WordPress image als basis
 FROM wordpress:latest
 
-# Voeg een aangepaste entrypoint script toe
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Kopieer het set-permissions.sh script naar de container
+COPY set-permissions.sh /usr/local/bin/
+
+# Geef uitvoeringsrechten aan het script
+RUN chmod +x /usr/local/bin/set-permissions.sh
 
 # Stel de werkmap in naar /var/www/html
 WORKDIR /var/www/html
 
-# Kopieer je plugin naar de juiste locatie
-#COPY ./wp-content/plugins/CustomWooCommerceRedis /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
+# Download en pak WooCommerce uit
+RUN apt-get update && apt-get install -y wget unzip \
+    && wget https://downloads.wordpress.org/plugin/woocommerce.zip \
+    && unzip woocommerce.zip -d /var/www/html/wp-content/plugins \
+    && rm woocommerce.zip
 
-# Optioneel: verander de eigenaar van de bestanden naar www-data
-#RUN chown -R www-data:www-data /var/www/html
-
-# Gebruik aangepast entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["apache2-foreground"]
+# CMD voor het uitvoeren van het set-permissions.sh script bij het starten van de container
+CMD ["/usr/local/bin/set-permissions.sh"]
