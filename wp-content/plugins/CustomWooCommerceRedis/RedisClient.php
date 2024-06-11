@@ -31,5 +31,9 @@ class RedisClient implements IRedisClient {
     public function delete(string $key): bool {
         return $this->redisConnection->del([$key]) > 0;
     }
+
+    public function flushdb(): void {
+        $this->redisConnection->flushdb();
+    }
 }
  
