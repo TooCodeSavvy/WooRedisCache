@@ -2,7 +2,7 @@
 
 namespace CustomWooCommerceRedis;
 
-require 'vendor/autoload.php';
+require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
 
 use CustomWooCommerceRedis\Interfaces\IRedisClient;
 use Predis\Client;
@@ -19,7 +19,8 @@ class RedisClient implements IRedisClient {
     }
 
     public function set(string $key, $value, int $expiry): bool {
-        return $this->redisConnection->setex($key, $expiry, serialize($value));
+        $response = $this->redisConnection->setex($key, $expiry, serialize($value));
+        return $response == 'OK';
     }
 
     public function get(string $key) {
@@ -31,3 +32,4 @@ class RedisClient implements IRedisClient {
         return $this->redisConnection->del([$key]) > 0;
     }
 }
+ 

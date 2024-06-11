@@ -1,3 +1,8 @@
-/vendor
-composer.lock
-wordpress_data
+/wordpress_data
+/vendor/
+/composer.lock
+/.env
+/tests/
+/examples/
+/docs/
+/wp-content/plugins/CustomWooCommerceRedis/vendor

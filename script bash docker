@@ -7,4 +7,12 @@ sudo rm -r readme.html license.txt
 sudo rm -d -r wp-includes/ wp-content/ wp-admin/
 
 
+CSV PRODUCTS:
+wp-content/plugins/woocommerce/sample-data/sample_products.csv
 
+RETRIEVE FROM GIT:
+sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/CustomPlugin.php
+sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/RedisClient.php
+sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/RedisClient.php
+sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/interfaces/IRedisClient.php
+sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/custom-woocommerce-redis-integration.php
