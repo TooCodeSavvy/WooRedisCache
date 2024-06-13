@@ -43,7 +43,7 @@ class CustomPluginIntegrationTest extends TestCase {
     public function testAddToCart() {
         // Voeg een product toe aan de winkelwagen
         WC()->cart->add_to_cart(32, 2);
-        WC()->cart->add_to_cart(31, 2);
+        WC()->cart->add_to_cart(31, 2); 
  
         // Synchroniseer winkelwagen met Redis
         $this->customPlugin->syncCartToRedis();
