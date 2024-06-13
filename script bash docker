@@ -16,3 +16,9 @@ sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/RedisClient.php
 sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/RedisClient.php
 sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/interfaces/IRedisClient.php
 sudo git checkout -- wp-content/plugins/CustomWooCommerceRedis/custom-woocommerce-redis-integration.php
+
+
+TESTING:
+1) sudo docker compose exec wordpress bash
+2) cd wp-content/plugins/custom-woocommerce-redis-integration/
+3) vendor/bin/phpunit --configuration phpunit.xml

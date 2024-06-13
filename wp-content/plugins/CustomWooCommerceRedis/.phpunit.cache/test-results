@@ -1,1 +1,1 @@
-{"version":1,"defects":{"CustomPluginIntegrationTest::testIndexProduct":7},"times":{"CustomPluginIntegrationTest::testIndexProduct":0.011}}
+{"version":1,"defects":{"CustomPluginIntegrationTest::testIndexProduct":8,"CustomPluginIntegrationTest::testAddToCart":7},"times":{"CustomPluginIntegrationTest::testIndexProduct":0.007,"CustomPluginIntegrationTest::testAddToCart":0.012}}

@@ -23,7 +23,7 @@ class RedisClient implements IRedisClient {
         return $response == 'OK';
     }
 
-    public function get(string $key) {
+    public function get(string $key) { 
         $value = $this->redisConnection->get($key);
         return $value ? unserialize($value) : null;
     }
