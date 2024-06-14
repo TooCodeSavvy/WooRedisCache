@@ -1,38 +1,59 @@
-# Custom WooCommerce Redis Integration
+# WooCommerce Redis Integration
 
-Een aangepaste WordPress plugin om WooCommerce productgegevens en winkelwageninformatie in Redis te cachen.
+Custom WordPress plugin om WooCommerce productgegevens en winkelwagengegevens in Redis te cachen.
 
 ## Beschrijving
 
-Deze plugin integreert Redis caching in WooCommerce om de prestaties te verbeteren door productgegevens en winkelwageninformatie op te slaan in een Redis database. Dit kan helpen bij het sneller laden van productpagina's en het efficiënter beheren van winkelwagens.
+Deze plugin integreert Redis-caching in WooCommerce om betere prestaties te leveren door productgegevens en winkelwageninformatie op te slaan in een Redis-database. De bedoeling is om deze plugin te gebruiken bovenop bestaande PHP-code die hooks bijvoorbeeld gebruikt om de winkelwagen te updaten, op te halen etc. Het is ook bedoeld om productgegevens op te halen, alles gebeurt op PHP-niveau.
 
 ## Functies
 
-- Caching van WooCommerce productgegevens in Redis
-- Caching van winkelwageninformatie in Redis
-- Automatische invalidatie van cache bij productupdates
-- Ondersteunt Redis als caching backend via Predis
+- Caching van WooCommerce productgegevens in Redis.
+- Caching van winkelwageninformatie in Redis.
 
 ## Installatie
 
+1. Upload de pluginbestanden naar de `/wp-content/plugins/custom-woocommerce-redis-integration` directory, of installeer de plugin direct via de WordPress plugin-directory.
+2. Activeer de plugin via het 'Plugins' menu in WordPress.
 
-1. **Installeer de vereisten via Composer**:
-    ```bash
-    composer install
-    ```
+## Gebruik
 
-2. **Activeer de plugin in WordPress**:
-    - Upload de plugin directory naar de `/wp-content/plugins/` directory.
-    - Activeer de plugin via het 'Plugins' menu in WordPress.
+### Basisconfiguratie
 
-### Bestandsstructuur
+Zodra de plugin is geïnstalleerd en geactiveerd, moet je op thema-niveau je code aanpassen om de methodes te gebruiken van deze plugin. Het zal de methodes exposen waardoor je die kan aanroepen op je productpagina en in je hooks in je `functions.php` of je snippets.
 
-- `src/interfaces/IRedisClient.php` - Interface voor de Redis client.
-- `src/RedisClient.php` - Implementatie van de Redis client.
-- `src/CustomPlugin.php` - Hoofdplugin klasse.
-- `src/custom-woocommerce-redis-integration.php` - Plugin bootstrap bestand.
+### Voorbeeld van het bijwerken van een winkelwagenitem:
 
-### Composer
+```php
+public function testUpdateCartItem() {
+    global $woocommerce;
 
-Deze plugin gebruikt Composer voor afhankelijkheden. Zorg ervoor dat je Composer hebt geïnstalleerd en voer `composer install` uit om de vereisten te installeren.
+    $woocommerce->cart->empty_cart();
+    
+    // Voeg een product toe aan de winkelwagen
+    $product_id = 32;
+    $quantity = 2;
+    $cart_item_key = $woocommerce->cart->add_to_cart($product_id, $quantity);
 
+    // Synchroniseer winkelwagen met Redis
+    $this->customPlugin->syncCartToRedis();
+
+    // Controleer of het item in de winkelwagen bestaat
+    if ($woocommerce->cart->get_cart_item($cart_item_key)) {
+        // Update de hoeveelheid
+        $new_quantity = 5;
+        $woocommerce->cart->set_quantity($cart_item_key, $new_quantity);
+    }
+
+    // Synchroniseer winkelwagen met Redis
+    $this->customPlugin->syncCartToRedis();
+
+    $cartKey = $this->customPlugin->getCartKey();
+    $cartData = $this->redisClient->get($cartKey);
+    $cartData = unserialize($cartData);
+
+    // Controleer of de hoeveelheid correct is bijgewerkt
+    $this->assertEquals(5, $woocommerce->cart->get_cart_contents_count(), 'Aantal producten in de winkelwagen komt niet overeen na bijwerken van de hoeveelheid.');
+    $this->assertEquals(5, $cartData[array_key_first($cartData)]['quantity']);
+    $this->assertEquals($woocommerce->cart->get_cart_contents_count(), $cartData[array_key_first($cartData)]['quantity']);
+}
