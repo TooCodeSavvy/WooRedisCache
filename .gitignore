@@ -8,3 +8,4 @@
 /wp-content/plugins/CustomWooCommerceRedis/vendor
 ~/.vscode-root
 ~/code
+.env
