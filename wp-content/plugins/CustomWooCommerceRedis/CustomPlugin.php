@@ -55,17 +55,23 @@ class CustomPlugin {
     public function syncCartToRedis() {
         // Get cart data from WooCommerce session
         $cartData = WC()->session->get('cart');
-
-        // Serialize the cart data
-        $serializedCartData = serialize($cartData);
-
-        // Get the unique cart key
-        $cartKey = $this->getCartKey();
-
-        // Store serialized cart data in Redis with the unique cart key
-        $this->redisClient->set($cartKey, $serializedCartData, 3600);
+    
+        // Check if the cart is empty
+        if (empty($cartData)) {
+            $cartKey = $this->getCartKey();
+            $this->redisClient->delete($cartKey); // Verwijder de cart uit Redis als de winkelwagen leeg is
+        } else {
+            // Serialize the cart data
+            $serializedCartData = serialize($cartData);
+    
+            // Get the unique cart key
+            $cartKey = $this->getCartKey();
+    
+            // Store serialized cart data in Redis with the unique cart key
+            $this->redisClient->set($cartKey, $serializedCartData, 3600);
+        }
     }
-
+    
     public function syncCartFromRedis() {
         $cartData = $this->redisClient->get($this->getCartKey());
 

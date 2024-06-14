@@ -131,5 +131,48 @@ class CustomPluginIntegrationTest extends TestCase {
         $this->assertEquals($woocommerce->cart->get_cart_contents_count(), $cartData[array_key_first($cartData)]['quantity']);
 
     }
+
+    public function testRemoveCartItem() {
+        global $woocommerce;
+    
+        $woocommerce->cart->empty_cart();
+    
+        // Voeg een product toe aan de winkelwagen
+        $product_id = 32;
+        $quantity = 2;
+        $cart_item_key = $woocommerce->cart->add_to_cart($product_id, $quantity);
+    
+        // Synchroniseer winkelwagen met Redis
+        $this->customPlugin->syncCartToRedis();
+
+        // Controleer of het product correct is verwijderd uit Redis
+        $cartKey = $this->customPlugin->getCartKey();
+        $cartDataBefore = $this->redisClient->get($cartKey);
+        $cartDataBefore = $cartDataBefore ? unserialize($cartDataBefore) : [];
+                
+        //var_dump($cartData);  
+    
+        // Verwijder het item uit de winkelwagen
+        $woocommerce->cart->remove_cart_item($cart_item_key);
+    
+        // Controleer of het item niet meer in de winkelwagen bestaat
+        $cart_items = $woocommerce->cart->get_cart(); 
+
+        $this->assertFalse(isset($cart_items[$cart_item_key]), 'Het product is nog steeds aanwezig in de winkelwagen na verwijdering.');
+    
+        // Synchroniseer winkelwagen met Redis
+        $this->customPlugin->syncCartToRedis();
+
+        // Haal de bijgewerkte gegevens van de winkelwagen in Redis op
+        $cartDataAfter = $this->redisClient->get($cartKey);
+        $cartDataAfter = $cartDataAfter ? unserialize($cartDataAfter) : [];
+        
+        // Controleer of de winkelwagen in Redis nu leeg is
+        $this->assertEmpty($cartDataAfter, 'De winkelwagen in Redis bevat nog steeds gegevens na het verwijderen van het product.');
+
+        // Controleer of de winkelwagen in Redis eerder wel gegevens bevatte
+        $this->assertNotEmpty($cartDataBefore, 'Vóór het verwijderen bevatte de winkelwagen in Redis geen gegevens.');
+    }
+    
     
 }
