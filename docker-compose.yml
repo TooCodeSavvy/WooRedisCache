@@ -8,23 +8,23 @@ services:
     ports:
       - "8080:80"
     environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: exampleuser
-      WORDPRESS_DB_PASSWORD: examplepass
-      WORDPRESS_DB_NAME: exampledb
-      WORDPRESS_REDIS_HOST: redis
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_REDIS_HOST: ${WORDPRESS_REDIS_HOST}
     volumes:
       - "./wordpress_data/:/var/www/html"
       - "./wp-content/plugins/CustomWooCommerceRedis/:/var/www/html/wp-content/plugins/custom-woocommerce-redis-integration"
       - "./vendor/:/var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
-             
+
   db:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: exampledb
-      MYSQL_USER: exampleuser
-      MYSQL_PASSWORD: examplepass
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
 
