@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -32,6 +33,6 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    # Voer PHPUnit-tests uit
+    # Run PHPUnit tests
     - name: Run PHPUnit tests
       run: composer test
