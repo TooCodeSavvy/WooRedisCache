@@ -59,7 +59,7 @@ jobs:
 
     - name: Start services
       run: |
-        docker compose -f docker-compose.yml up -d
+        docker compose up -d -f
 
     - name: Wait for MySQL to be ready
       run: |
@@ -77,9 +77,9 @@ jobs:
 
     - name: Run PHPUnit tests
       run: |
-        docker compose -f docker-compose.yml run phpunit
+        docker compose run phpunit -f
 
     - name: Shutdown services
       if: always()
       run: |
-        docker compose -f docker-compose.yml down
+        docker compose down -f
