@@ -18,6 +18,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Use PHP ${{ matrix.php }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+
+    - name: Check PHP version
+      run: php -v
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
       working-directory: ${{ github.workspace }}
