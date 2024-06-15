@@ -3,7 +3,7 @@
     "description": "Een korte beschrijving van je project",
     "autoload": {
         "psr-4": {
-            "CustomWooCommerceRedis\\": "src/"
+            "CustomWooCommerceRedis\\": "./"
         }
     },
     "require": {

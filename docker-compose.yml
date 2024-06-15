@@ -8,11 +8,15 @@ services:
     ports:
       - "8080:80"
     environment:
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-      WORDPRESS_REDIS_HOST: ${WORDPRESS_REDIS_HOST}
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER_FILE: /run/secrets/wordpress_db_user
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/wordpress_db_password
+      WORDPRESS_DB_NAME_FILE: /run/secrets/wordpress_db_name
+      WORDPRESS_REDIS_HOST: redis
+    secrets:
+      - wordpress_db_user
+      - wordpress_db_password
+      - wordpress_db_name
     volumes:
       - "./wordpress_data/:/var/www/html"
       - "./wp-content/plugins/CustomWooCommerceRedis/:/var/www/html/wp-content/plugins/custom-woocommerce-redis-integration"
@@ -21,10 +25,15 @@ services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE_FILE: /run/secrets/wordpress_db_name
+      MYSQL_USER_FILE: /run/secrets/wordpress_db_user
+      MYSQL_PASSWORD_FILE: /run/secrets/wordpress_db_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    secrets:
+      - wordpress_db_user
+      - wordpress_db_password
+      - wordpress_db_name
+      - mysql_root_password
     volumes:
       - db_data:/var/lib/mysql
 
@@ -34,6 +43,16 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+
+secrets:
+  wordpress_db_user:
+    file: ./wordpress_db_user.txt
+  wordpress_db_password:
+    file: ./wordpress_db_password.txt
+  wordpress_db_name:
+    file: ./wordpress_db_name.txt
+  mysql_root_password:
+    file: ./mysql_root_password.txt
 
 volumes:
   db_data:
