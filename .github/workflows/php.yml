@@ -60,13 +60,13 @@ jobs:
         echo "wordpress" > wordpress_db_name.txt
         echo "root_password" > mysql_root_password.txt
 
-    - name: Build Docker images
+    - name: Bdocker-compose.ymluild Docker images
       run: |
         docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
 
     - name: Start services
       run: |
-        docker compose -f docker-compose.yml up -d
+        docker compose -f docker-compose.yml up 
 
     - name: Wait for MySQL to be ready
       run: |
