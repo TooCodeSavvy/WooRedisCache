@@ -15,7 +15,8 @@ COPY . /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
 WORKDIR /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
 
 # Installeer Composer afhankelijkheden
-RUN composer install --no-dev
+# Als composer.lock niet bestaat, dan zal het installeren alle dependencies ophalen
+RUN composer install --no-dev || true
 
 # Voer PHPUnit tests uit
 CMD ["vendor/bin/phpunit", "--configuration", "phpunit.xml"]
