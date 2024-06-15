@@ -50,5 +50,6 @@ jobs:
 
     # Run PHPUnit tests
     - name: Run PHPUnit tests
-      run: composer test
+      run: vendor/bin/phpunit --configuration wp-content/plugins/CustomWooCommerceRedis/phpunit.xml
       working-directory: ${{ github.workspace }}
+
