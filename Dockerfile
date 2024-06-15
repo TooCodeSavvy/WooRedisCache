@@ -12,7 +12,7 @@ COPY ./wp-content/plugins/CustomWooCommerceRedis /var/www/html/wp-content/plugin
 
 # Kopieer Composer-bestanden naar de container
 COPY composer.json /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/composer.json
-COPY composer.lock /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/composer.lock
+#COPY composer.lock /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/composer.lock
 
 # Installeer Composer afhankelijkheden
 WORKDIR /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
