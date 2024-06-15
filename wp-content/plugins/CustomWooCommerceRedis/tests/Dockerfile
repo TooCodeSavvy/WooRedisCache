@@ -9,14 +9,17 @@ RUN apt-get update \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Kopieer de plugin code naar de container
-COPY . /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
+COPY ./wp-content/plugins/CustomWooCommerceRedis /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
 
 # Stel de werkmap in naar de plugin directory
 WORKDIR /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
 
+# Kopieer composer.json en composer.lock
+COPY ./wp-content/plugins/CustomWooCommerceRedis/composer.json /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/composer.json
+COPY ./wp-content/plugins/CustomWooCommerceRedis/composer.lock /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/composer.lock
+
 # Installeer Composer afhankelijkheden
-# Als composer.lock niet bestaat, dan zal het installeren alle dependencies ophalen
-RUN composer install --no-dev || true
+RUN composer install --no-dev
 
 # Voer PHPUnit tests uit
 CMD ["vendor/bin/phpunit", "--configuration", "phpunit.xml"]
