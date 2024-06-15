@@ -1,55 +1,85 @@
-name: PHP Composer
+name: CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: read
+    branches:
+      - main
 
 jobs:
-  build:
-
+  build-and-test:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress_user
+          MYSQL_PASSWORD: wordpress_password
+          MYSQL_ROOT_PASSWORD: root_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
 
-    - name: Use PHP ${{ matrix.php }}
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-    - name: Check PHP version
-      run: php -v
-
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
-      working-directory: ${{ github.workspace }}
-
-    - name: Cache Composer packages
-      id: composer-cache
+    - name: Cache Docker layers
       uses: actions/cache@v3
       with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('composer.lock') }}
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-php-
-    
-    # Fail the workflow if cache not found
-    - name: Check if Composer cache is found
-      if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: echo "::error::Composer cache not found"
-    
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-      working-directory: ${{ github.workspace }}
+          ${{ runner.os }}-buildx-
 
-    # Run PHPUnit tests
+    - name: Build Docker images
+      run: |
+        docker compose -f docker-compose.yml build
+
+    - name: Start services
+      run: |
+        docker compose -f docker-compose.yml up -d
+
+    - name: Wait for MySQL to be ready
+      run: |
+        until docker-compose exec db mysqladmin ping --silent; do
+          echo "Waiting for MySQL..."
+          sleep 5
+        done
+
+    - name: Wait for WordPress to be ready
+      run: |
+        until curl -sSf http://localhost:8080 > /dev/null; do
+          echo "Waiting for WordPress..."
+          sleep 5
+        done
+
     - name: Run PHPUnit tests
-      run: docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
+      run: |
+        docker compose -f docker-compose.yml run phpunit
 
-
+    - name: Shutdown services
+      if: always()
+      run: |
+        docker compose -f docker-compose.yml down
