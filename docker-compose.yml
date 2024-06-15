@@ -67,5 +67,5 @@ secrets:
 
 volumes:
   db_data:
-  redis_data:
+  redis_data: 
   wordpress_data:
