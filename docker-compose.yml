@@ -51,7 +51,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "6380:6379" # Map container port 6379 to host port 6380
     volumes:
       - redis_data:/data
 
