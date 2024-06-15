@@ -14,3 +14,4 @@ wordpress_db_user.txt
 wordpress_db_name.txt
 mysql_root_password.txt
 *.swp
+/home/hp/Repositories/WooRedisCache/~
