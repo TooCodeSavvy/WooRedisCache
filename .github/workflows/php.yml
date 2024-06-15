@@ -30,7 +30,12 @@ jobs:
         key: ${{ runner.os }}-php-${{ hashFiles('composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
-
+    
+    # Fail the workflow if cache not found
+    - name: Check if Composer cache is found
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: echo "::error::Composer cache not found"
+    
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
       working-directory: ${{ github.workspace }}
