@@ -22,6 +22,17 @@ services:
       - "./wp-content/plugins/CustomWooCommerceRedis/:/var/www/html/wp-content/plugins/custom-woocommerce-redis-integration"
       - "./vendor/:/var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
 
+  phpunit:
+    image: wordpress:latest
+    depends_on:
+      - wordpress
+    volumes:
+      - "./wordpress_data/:/var/www/html" 
+      - ./wp-content/plugins/CustomWooCommerceRedis:/var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
+      - "./vendor/:/var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
+    entrypoint: /bin/bash
+    command: -c "cd /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration && vendor/bin/phpunit --configuration phpunit.xml"
+    
   db:
     image: mysql:8.0
     environment:

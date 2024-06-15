@@ -2,6 +2,9 @@
 namespace CustomWooCommerceRedis;
 
 class CustomPlugin {
+    private $customPluginProducts;
+    private $customPluginCart;
+
     public function __construct() {
         add_action('init', [$this, 'initialize']);
     }
