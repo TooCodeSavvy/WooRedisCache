@@ -53,13 +53,20 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
 
+    - name: Create secret files
+      run: |
+        echo "wordpress_user" > wordpress_db_user.txt
+        echo "wordpress_password" > wordpress_db_password.txt
+        echo "wordpress" > wordpress_db_name.txt
+        echo "root_password" > mysql_root_password.txt
+
     - name: Build Docker images
       run: |
         docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
 
     - name: Start services
       run: |
-        docker compose up -d 
+        docker compose -f docker-compose.yml up -d
 
     - name: Wait for MySQL to be ready
       run: |
@@ -77,9 +84,9 @@ jobs:
 
     - name: Run PHPUnit tests
       run: |
-        docker compose run phpunit
+        docker compose -f docker-compose.yml run phpunit
 
     - name: Shutdown services
       if: always()
       run: |
-        docker compose down 
+        docker compose -f docker-compose.yml down
