@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mysql:
+      db:
         image: mysql:8.0
         env:
           MYSQL_DATABASE: wordpress
@@ -55,7 +55,7 @@ jobs:
 
     - name: Build Docker images
       run: |
-        docker compose -f docker-compose.yml build
+        docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
 
     - name: Start services
       run: |
@@ -63,7 +63,7 @@ jobs:
 
     - name: Wait for MySQL to be ready
       run: |
-        until docker-compose exec db mysqladmin ping --silent; do
+        until docker compose exec db mysqladmin ping --silent; do
           echo "Waiting for MySQL..."
           sleep 5
         done
