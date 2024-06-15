@@ -14,10 +14,6 @@ COPY ./wp-content/plugins/CustomWooCommerceRedis /var/www/html/wp-content/plugin
 # Stel de werkmap in naar de plugin directory
 WORKDIR /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration
 
-# Kopieer composer.json en composer.lock
-COPY ./wp-content/plugins/CustomWooCommerceRedis/composer.json /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/composer.json
-COPY ./wp-content/plugins/CustomWooCommerceRedis/composer.lock /var/www/html/wp-content/plugins/custom-woocommerce-redis-integration/composer.lock
-
 # Installeer Composer afhankelijkheden
 RUN composer install --no-dev
 
