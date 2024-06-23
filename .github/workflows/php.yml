@@ -3,10 +3,10 @@ name: CI/CD
 on:
   push:
     branches:
-      - main
+      - dev
   pull_request:
     branches:
-      - main
+      - dev
 
 jobs:
   build-and-test:
@@ -55,10 +55,10 @@ jobs:
 
     - name: Create secret files
       run: |
-        echo "wordpress_user" > wordpress_db_user.txt
-        echo "wordpress_password" > wordpress_db_password.txt
-        echo "wordpress" > wordpress_db_name.txt
-        echo "root_password" > mysql_root_password.txt
+        echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
+        echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
+        echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
+        echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
 
     - name: Build Docker images
       run: |
@@ -66,7 +66,7 @@ jobs:
 
     - name: Start services
       run: |
-        docker compose -f docker-compose.yml up 
+        docker compose -f docker-compose.yml up -d
 
     - name: Wait for MySQL to be ready
       run: |
@@ -81,6 +81,14 @@ jobs:
           echo "Waiting for WordPress..."
           sleep 5
         done
+
+    - name: Install WordPress and configure WooCommerce
+      run: |
+        docker compose exec wordpress wp core install --url="http://127.0.0.1:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com"
+        docker compose exec wordpress wp plugin install woocommerce --activate
+        docker compose exec wordpress wp plugin activate custom-woocommerce-redis-integration
+        # Import producten
+        docker compose exec wordpress wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=true  
 
     - name: Run PHPUnit tests
       run: |

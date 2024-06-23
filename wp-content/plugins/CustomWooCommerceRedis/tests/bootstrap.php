@@ -1,10 +1,10 @@
 <?php
 // Bootstrapping WordPress
-require '/var/www/html/wp-load.php';
+require '/usr/share/nginx/html/wp-load.php';
 
 // Controleer of WooCommerce al is geladen
 if (!function_exists('WC')) {
-    require '/var/www/html/wp-content/plugins/woocommerce/woocommerce.php';
+    require '/usr/share/nginx/html/wp-content/plugins/woocommerce/woocommerce.php';
 }
 
 // Autoloader for your plugin
