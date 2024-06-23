@@ -22,8 +22,8 @@ class CustomPluginIntegrationTest extends TestCase {
 
     public function testAddToCart() {
         // Voeg een product toe aan de winkelwagen
-        WC()->cart->add_to_cart(32, 2);
-        WC()->cart->add_to_cart(31, 2); 
+        WC()->cart->add_to_cart(34, 2);
+        WC()->cart->add_to_cart(26, 2); 
  
         // Synchroniseer winkelwagen met Redis
         $this->customPluginCart->syncCartToRedis();
@@ -42,9 +42,9 @@ class CustomPluginIntegrationTest extends TestCase {
 
          // Validatie van winkelwagengegevens in Redis
         $this->assertNotEmpty($cartData, 'De winkelwageninformatie is niet in Redis opgeslagen');
-        $this->assertEquals(32, $cartData[array_key_first($cartData)]['product_id']);
+        $this->assertEquals(34, $cartData[array_key_first($cartData)]['product_id']);
         $this->assertEquals(2, $cartData[array_key_first($cartData)]['quantity']);
-        $this->assertEquals(31, $cartData[array_keys($cartData)[1]]['product_id']);
+        $this->assertEquals(26, $cartData[array_keys($cartData)[1]]['product_id']);
         $this->assertEquals(2, $cartData[array_keys($cartData)[1]]['quantity']);
     }
 
@@ -187,8 +187,8 @@ class CustomPluginIntegrationTest extends TestCase {
         
         $woocommerce->cart->empty_cart();
     
-        $product_id = 11; // Assuming 32 is a variable product ID
-        $variation_id = 27; // Example variation ID
+        $product_id = 13; // Assuming 32 is a variable product ID
+        $variation_id = 29; // Example variation ID
         $quantity = 2;
         $key1 = $woocommerce->cart->add_to_cart($product_id, $quantity, $variation_id);
     

@@ -54,7 +54,7 @@ class CustomPluginProducts {
                 'stock' => $product->get_stock_quantity(),
             ];
 
-            $this->redisClient->set("product_" . $product->get_id(), $productData);
+            $this->redisClient->set("product_" . $product->get_id(), $productData, 3600);
         }
     }
 

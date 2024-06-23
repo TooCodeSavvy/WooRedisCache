@@ -11,6 +11,10 @@ class RedisClient implements IRedisClient {
     private $redisConnection;
 
     public function __construct() {
+        $this->connect();
+    }
+
+    private function connect() {
         $this->redisConnection = new Client([
             'scheme' => 'tcp',
             'host'   => 'redis', // Verander naar 'redis' als je de Docker Redis service gebruikt
@@ -23,7 +27,7 @@ class RedisClient implements IRedisClient {
         return $response == 'OK';
     }
 
-    public function get(string $key) { 
+    public function get(string $key) {
         $value = $this->redisConnection->get($key);
         return $value ? unserialize($value) : null;
     }
@@ -35,5 +39,9 @@ class RedisClient implements IRedisClient {
     public function flushdb(): void {
         $this->redisConnection->flushdb();
     }
+
+    // Getter voor redisConnection
+    public function getRedisConnection() {
+        return $this->redisConnection;
+    }
 }
- 

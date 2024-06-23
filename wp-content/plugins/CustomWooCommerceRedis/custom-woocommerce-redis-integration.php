@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Custom WooCommerce Redis Integration
-Description: Een aangepaste plugin om WooCommerce productgegevens en winkelwageninformatie in Redis te cachen.
+Description: WooCommerce productgegevens en winkelwageninformatie in Redis te cachen.
 Version: 1.0
-Author: Jouw Naam
+Author: name
 */
 
 // Controleer of WordPress direct toegang probeert te krijgen tot het bestand
@@ -14,20 +14,47 @@ require_once plugin_dir_path(__FILE__) . '/interfaces/IRedisClient.php';
 require_once plugin_dir_path(__FILE__) . '/RedisClient.php';
 require_once plugin_dir_path(__FILE__) . '/CustomPlugin.php';
 
+
+// Vereiste bestanden laden met foutafhandeling
+function load_custom_plugin_files() {
+    $required_files = [
+        'interfaces/IRedisClient.php',
+        'RedisClient.php',
+        'CustomPlugin.php'
+    ];
+
+    foreach ($required_files as $file) {
+        $path = plugin_dir_path(__FILE__) . $file;
+        if (file_exists($path)) {
+            require_once $path;
+        } else {
+            error_log("Required file {$file} not found.");
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // Plugin initialisatie
 function init_custom_plugin() {
-    // Foutafhandeling toevoegen voor het laden van vereiste bestanden
+    // Laad vereiste bestanden
+    if (!load_custom_plugin_files()) {
+        return;
+    }
+
+    // Controleer of de benodigde klassen bestaan
     if (!class_exists('CustomWooCommerceRedis\RedisClient') || !class_exists('CustomWooCommerceRedis\CustomPlugin')) {
         return;
     }
 
     // Instantieer RedisClient en CustomPlugin
     $redisClient = new CustomWooCommerceRedis\RedisClient();
-    $customPlugin = new CustomWooCommerceRedis\CustomPlugin($redisClient);
-    
-    // Geef de plugin-instantie terug voor eventueel gebruik
-    return $customPlugin;
+    $GLOBALS['custom_plugin'] = new CustomWooCommerceRedis\CustomPlugin($redisClient);
 }
 
-// Plugin initialisatie hook
+// Hook om de plugin te initialiseren
 add_action('plugins_loaded', 'init_custom_plugin');
+
+ 
+?>
