@@ -84,12 +84,12 @@ jobs:
 
     - name: Install WordPress and configure WooCommerce
       run: |
-        docker compose exec wordpress sudo -u root -- wp core install --url="http://localhost" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com"
-        docker compose exec my-phpunit-tests sudo -u root -- wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com"
-        docker compose exec wordpress sudo -u root -- wp plugin install woocommerce --activate
-        docker compose exec wordpress sudo -u root -- wp plugin activate custom-woocommerce-redis-integration
+        docker compose exec wordpress -u root -- wp core install --url="http://localhost" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com"
+        docker compose exec my-phpunit-tests -u root -- wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com"
+        docker compose exec wordpress -u root -- wp plugin install woocommerce --activate
+        docker compose exec wordpress -u root -- wp plugin activate custom-woocommerce-redis-integration
         # Import products
-        docker compose exec wordpress sudo -u root -- wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=truedocker compose exec wordpress wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=true  
+        docker compose exec wordpress -u root -- wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=truedocker compose exec wordpress wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=true  
 
     - name: Seed WooCommerce Products
       run: docker-compose exec phpunit php /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/seed-products.php
