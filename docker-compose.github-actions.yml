@@ -1,0 +1,142 @@
+#version: '3.8'
+
+services:
+  reverse-proxy:
+    image: traefik:v3.0
+    # command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/config/traefik.yaml:/etc/traefik/traefik.yaml
+    networks:
+      - app-network
+
+  wordpress:
+    build: .
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER_FILE: /run/secrets/wordpress_db_user
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/wordpress_db_password
+      WORDPRESS_DB_NAME_FILE: /run/secrets/wordpress_db_name
+      WORDPRESS_REDIS_HOST: redis
+    secrets:
+      - wordpress_db_user
+      - wordpress_db_password
+      - wordpress_db_name
+    volumes:
+      - "./wordpress_data/:/usr/share/nginx/html"
+      - "./wp-content/plugins/CustomWooCommerceRedis:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration"
+      - "./vendor/:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
+    networks:
+      - app-network 
+    restart: always
+    command: >
+      bash -c "chown -R www-data:www-data /usr/share/nginx/html &&
+               chmod -R 755 /usr/share/nginx/html &&
+               chown -R www-data:www-data /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration &&
+               chmod -R 755 /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration &&
+               docker-entrypoint.sh 'php-fpm'"
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./wordpress_data/:/usr/share/nginx/html"
+      - "./wp-content/plugins/CustomWooCommerceRedis:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration"
+      - "./vendor/:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
+      - "nginx_cache:/var/cache/nginx"
+      - "./purge_cache.sh:/usr/local/bin/purge_cache.sh"
+    labels:
+      - "traefik.http.routers.nginx.rule=Host(`localhost`)"
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+    networks:
+      - app-network
+    depends_on:
+      - wordpress
+    restart: always
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  phpunit:
+    image: wordpress:php8.3-fpm
+    depends_on:
+      - wordpress
+    volumes:
+      - "./wordpress_data/:/usr/share/nginx/html" 
+      - "./wp-content/plugins/CustomWooCommerceRedis:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration"
+      - "./vendor/:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
+      - "./seed-products.php:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/seed-products.php"
+    entrypoint: /bin/bash
+    command: -c "cd /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration && apt-get update && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && composer install && vendor/bin/phpunit --configuration phpunit.xml"
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE_FILE: /run/secrets/wordpress_db_name
+      MYSQL_USER_FILE: /run/secrets/wordpress_db_user
+      MYSQL_PASSWORD_FILE: /run/secrets/wordpress_db_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    secrets:
+      - wordpress_db_user
+      - wordpress_db_password
+      - wordpress_db_name
+      - mysql_root_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6380:6379"  # Verander poort naar 6380 om conflict te voorkomen
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+  
+  portainer:
+    image: portainer/portainer-ce
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - 9002:9002
+    networks:
+      - app-network
+    labels:
+      - "traefik.http.routers.portainer.rule=Host(`portainer.example.com`)"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9002"
+
+secrets:
+  wordpress_db_user:
+    file: ./wordpress_db_user.txt
+  wordpress_db_password:
+    file: ./wordpress_db_password.txt
+  wordpress_db_name:
+    file: ./wordpress_db_name.txt
+  mysql_root_password:
+    file: ./mysql_root_password.txt
+
+volumes:
+  db_data:
+  redis_data:
+  wordpress_data:
+  portainer_data:
+  nginx_cache:
+
+networks:
+  app-network:
+    external: false
