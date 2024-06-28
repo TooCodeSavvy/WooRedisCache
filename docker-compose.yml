@@ -75,6 +75,7 @@ services:
       - "./wordpress_data/:/usr/share/nginx/html" 
       - "./wp-content/plugins/CustomWooCommerceRedis:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration"
       - "./vendor/:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
+      - "./seed-products.php:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/seed-products.php"
     entrypoint: /bin/bash
     command: -c "cd /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration && apt-get update && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && composer install && vendor/bin/phpunit --configuration phpunit.xml"
     networks:
@@ -138,4 +139,4 @@ volumes:
 
 networks:
   app-network:
-    external: true
+    external: false
