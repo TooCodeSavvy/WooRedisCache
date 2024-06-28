@@ -1,6 +1,6 @@
 {
     "name": "toocodesavvy/woorediscache",
-    "description": "Een korte beschrijving van je project",
+    "description": "WooCommerce productgegevens en winkelwageninformatie in Redis te cachen.",
     "license": "MIT",
     "autoload": {
         "psr-4": {

@@ -112,7 +112,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     ports:
-      - 9000:9002
+      - 9002:9002
     networks:
       - app-network
     labels:
@@ -138,4 +138,4 @@ volumes:
 
 networks:
   app-network:
-    driver: bridge
+    external: true

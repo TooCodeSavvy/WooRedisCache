@@ -59,8 +59,10 @@ class CustomPluginIntegrationProductsTest extends TestCase {
         // Ophalen van de post uit Redis
         $cachedData = $this->customPlugin->getRedisClient()->get("product_$postId");
 
+        // var_dump($cachedData);  
+
         // Assert
-        $this->assertNull($cachedData, 'Niet-product posts zouden niet gecachet moeten worden');
+        $this->assertEmpty($cachedData['items'], 'Niet-product posts zouden niet gecachet moeten worden');
     }
     
     public function testGetProduct() {

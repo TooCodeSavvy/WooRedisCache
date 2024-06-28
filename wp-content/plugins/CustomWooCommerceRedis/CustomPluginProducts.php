@@ -23,7 +23,7 @@ class CustomPluginProducts {
             'stock' => $product->get_stock_quantity(),
         ];
 
-        $this->redisClient->set("product_$postId", $productData, 3600);
+        $this->redisClient->set("product_$postId", $productData, 3600); 
     }
 
     public function getProduct($productId) {
@@ -34,7 +34,7 @@ class CustomPluginProducts {
         $product = wc_get_product($postId);
         $key = 'product_' . $postId;
         $data = json_encode($product->get_data());
-        $this->redisClient->set($key, $data, 3600); // Cache voor 1 uur
+        $this->redisClient->set($key, $data, 3600); 
     }
     
     public function cacheAllProducts() {
@@ -54,7 +54,7 @@ class CustomPluginProducts {
                 'stock' => $product->get_stock_quantity(),
             ];
 
-            $this->redisClient->set("product_" . $product->get_id(), $productData, 3600);
+            $this->redisClient->set("product_" . $product->get_id(), $productData, 3600); 
         }
     }
 

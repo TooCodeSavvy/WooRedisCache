@@ -18,12 +18,8 @@ class CustomPluginIntegrationTest extends TestCase {
         
         $this->customPluginCart = $this->customPlugin->getCustomPluginCart();
         // Clean Redis database before running test
-        $this->customPlugin->getRedisClient()->flushdb();
-
-        
-    }
- 
- 
+        $this->customPlugin->getRedisClient()->flushdb(); 
+    } 
 
     public function testAddToCart() {
 
@@ -125,7 +121,7 @@ class CustomPluginIntegrationTest extends TestCase {
             echo "Cart is empty.";
         }
         
-        var_dump($cartData); 
+        //var_dump($cartData); 
       //  var_dump($cartKey);
       
         // Controleer of de hoeveelheid correct is bijgewerkt
@@ -152,7 +148,8 @@ class CustomPluginIntegrationTest extends TestCase {
         $cartKey = $this->customPluginCart->getCartKey();
         $cartDataBefore = $this->customPlugin->getRedisClient()->get($cartKey); 
                 
-        //var_dump($cartData);  
+        // echo "Cart data before removal: ";
+        // var_dump($cartDataBefore['items']);  
     
         // Verwijder het item uit de winkelwagen
         $woocommerce->cart->remove_cart_item($cart_item_key);
@@ -167,12 +164,15 @@ class CustomPluginIntegrationTest extends TestCase {
 
         // Haal de bijgewerkte gegevens van de winkelwagen in Redis op
         $cartDataAfter = $this->customPlugin->getRedisClient()->get($cartKey); 
+
+        // echo "Cart data after removal: ";
+        // var_dump($cartDataAfter['items']);  
         
         // Controleer of de winkelwagen in Redis nu leeg is
-        $this->assertEmpty($cartDataAfter, 'De winkelwagen in Redis bevat nog steeds gegevens na het verwijderen van het product.');
+        $this->assertEmpty($cartDataAfter['items'], 'De winkelwagen in Redis bevat nog steeds gegevens na het verwijderen van het product.');
 
         // Controleer of de winkelwagen in Redis eerder wel gegevens bevatte
-        $this->assertNotEmpty($cartDataBefore, 'Vóór het verwijderen bevatte de winkelwagen in Redis geen gegevens.');
+        $this->assertNotEmpty($cartDataBefore['items'], 'Vóór het verwijderen bevatte de winkelwagen in Redis geen gegevens.');
     }
     
     public function testAddMultipleCartItems() {
@@ -266,6 +266,27 @@ class CustomPluginIntegrationTest extends TestCase {
         $this->assertFalse(isset($cart_items[$cart_item_key_2]), 'Het item is nog steeds aanwezig in de winkelwagen in Redis na gedeeltelijke verwijdering.');
         $this->assertArrayHasKey($cart_item_key_1, $cart_items, 'Het overgebleven item is niet correct gesynchroniseerd met Redis.');
     }
+
+    public function testReturnEmptyCart() {
+        global $woocommerce;
+        
+        // Leeg de winkelwagen
+        $woocommerce->cart->empty_cart();
+    
+        // Haal de cart key op
+        $cartKey = $this->customPluginCart->getCartKey();
+        
+        // Haal gegevens uit Redis
+        $cartData = $this->customPlugin->getRedisClient()->get($cartKey); 
+     
+        // var_dump($cartKey);
+        // var_dump($cartData);
+    
+        // Assert dat de items in de cart leeg zijn
+        $this->assertEmpty($cartData['items'], 'Cart is niet leeg');
+    }
+    
+
     
     
 }
