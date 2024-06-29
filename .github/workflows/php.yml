@@ -60,9 +60,9 @@ jobs:
         echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
         echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
 
-    - name: Build Docker images
-      run: |
-        docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
+    # - name: Build Docker images
+    #   run: |
+    #     docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
 
     - name: Start services
       run: |
