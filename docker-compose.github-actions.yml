@@ -33,9 +33,9 @@ services:
       - app-network 
     restart: always
     command: >
-      bash -c "chown -R root:root /usr/share/nginx/html &&
+      bash -c "chown -R www-data:www-data /usr/share/nginx/html &&
                chmod -R 755 /usr/share/nginx/html &&
-               chown -R root:root /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration &&
+               chown -R www-data:www-data /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration &&
                chmod -R 755 /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration &&
                docker-entrypoint.sh 'php-fpm'"
 
