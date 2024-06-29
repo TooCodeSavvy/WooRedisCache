@@ -55,10 +55,10 @@ jobs:
 
     - name: Create secret files
       run: |
-        echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
-        echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
-        echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
-        echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
+        echo "exampleuser" > wordpress_db_user.txt
+        echo "examplepass" > wordpress_db_password.txt
+        echo "exampledb" > wordpress_db_name.txt
+        echo "examplepass" > mysql_root_password.txt
 
     # - name: Build Docker images
     #   run: |
