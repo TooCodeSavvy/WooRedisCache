@@ -85,7 +85,7 @@ jobs:
     - name: Install WordPress and configure WooCommerce
       run: |
         docker compose exec -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com" --allow-root
-        docker compose exec -u root my-phpunit-tests wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com" --allow-root
+        docker compose exec -u root phpunit wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com" --allow-root
         docker compose exec -u root wordpress wp plugin install woocommerce --activate --allow-root
         docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --allow-root
         # Import products
