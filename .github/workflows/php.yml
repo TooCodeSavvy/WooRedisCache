@@ -85,14 +85,14 @@ jobs:
     - name: Install WordPress and configure WooCommerce
       run: |
         docker compose exec -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com" --allow-root
-        # docker compose exec -u root phpunit wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com" --allow-root
+        docker compose exec -u root phpunit wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com" --allow-root
         docker compose exec -u root wordpress wp plugin install woocommerce --activate --allow-root
         docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --allow-root
         # Import products
         docker compose exec -u root wordpress wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=true --allow-rootcker compose exec -u root wordpress wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=truedocker compose exec wordpress -u root -- wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=truedocker compose exec wordpress wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=true  
 
-    # - name: Seed WooCommerce Products
-    #   run: docker-compose exec phpunit php /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/seed-products.php
+    - name: Seed WooCommerce Products
+      run: docker-compose exec phpunit php /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/seed-products.php
 
     - name: Run PHPUnit tests
       run: |
