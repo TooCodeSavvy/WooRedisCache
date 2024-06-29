@@ -53,16 +53,16 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
 
-    # - name: Create secret files
-    #   run: |
-    #     echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
-    #     echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
-    #     echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
-    #     echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
+    - name: Create secret files
+      run: |
+        echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
+        echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
+        echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
+        echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
 
-    # - name: Build Docker images
-    #   run: |
-    #     docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
+    - name: Build Docker images
+      run: |
+        docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
 
     - name: Start services
       run: |
