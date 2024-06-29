@@ -66,7 +66,7 @@ jobs:
 
     - name: Start services
       run: |
-        docker-compose -f docker-compose.github-actions.yml up 
+        docker-compose -f docker-compose.github-actions.yml up -d
 
     - name: Wait for MySQL to be ready
       run: |
@@ -84,7 +84,7 @@ jobs:
 
     - name: Install WordPress and configure WooCommerce
       run: |
-        docker compose exec -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="exampleuser" --admin_password="examplepass" --admin_email="admin@example.com" --allow-root
+        docker compose exec -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="exampleuser" --admin_password="examplepass" --admin_email="admin@example.com" --allow-root --dbhost=dbdocker compose exec -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="exampleuser" --admin_password="examplepass" --admin_email="admin@example.com" --allow-root
     #     docker compose exec -u root phpunit wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com" --allow-root
     #     docker compose exec -u root wordpress wp plugin install woocommerce --activate --allow-root
     #     docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --allow-root
