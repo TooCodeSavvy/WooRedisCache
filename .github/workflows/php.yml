@@ -17,9 +17,9 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-          MYSQL_USER: ${{ secrets.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306:3306
         options: >-
@@ -53,12 +53,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
 
-    - name: Create secret files
-      run: |
-        echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
-        echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
-        echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
-        echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
+    # - name: Create secret files
+    #   run: |
+    #     echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
+    #     echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
+    #     echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
+    #     echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
 
     # - name: Build Docker images
     #   run: |
