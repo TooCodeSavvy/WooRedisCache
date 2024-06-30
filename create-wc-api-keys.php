@@ -7,16 +7,16 @@ if (defined('WP_CLI') && WP_CLI) {
             list($user_id, $description, $permissions) = $args;
             WP_CLI::log("Gebruikers ID: $user_id, Beschrijving: $description, Permissies: $permissions");
 
-            if (!class_exists('WC_Auth')) {
-                include_once '/usr/share/nginx/html/wp-content/plugins/woocommerce/includes/class-wc-auth.php';
+            if (!class_exists('WC_API_Keys')) {
+                include_once '/usr/share/nginx/html/wp-content/plugins/woocommerce/includes/class-wc-api-keys.php';
             }
 
-            if (!method_exists('WC_Auth', 'create_key')) {
-                WP_CLI::error("Method 'create_key' does not exist in WC_Auth class.");
+            if (!method_exists('WC_API_Keys', 'create_key')) {
+                WP_CLI::error("Method 'create_key' does not exist in WC_API_Keys class.");
                 return;
             }
 
-            $key_data = WC_Auth::create_key(array(
+            $key_data = WC_API_Keys::create_key(array(
                 'user_id' => $user_id,
                 'description' => $description,
                 'permissions' => $permissions
