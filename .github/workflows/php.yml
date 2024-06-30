@@ -84,6 +84,7 @@ jobs:
 
     - name: Install WordPress and configure WooCommerce
       run: |
+        docker compose logs db
         docker compose exec -T db mysql -u exampleuser -pexamplepass -e "SHOW GRANTS FOR 'exampleuser'@'%';"
         docker compose exec -T -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="exampleuser" --admin_password="examplepass" --admin_email="admin@example.com" --allow-root 
       env:
