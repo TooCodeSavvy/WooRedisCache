@@ -41,17 +41,13 @@ if (defined('WP_CLI') && WP_CLI) {
             $description = $data['description'];
             $permissions = $data['permissions'];
 
-            // Ensure WC_API class is loaded
-            if (!class_exists('WC_API')) {
-                include_once WP_PLUGIN_DIR . '/woocommerce/includes/class-wc-api.php';
-            }
-
-            // Include WC API Keys class if not already included
+            // Adjust path to class-wc-api-keys.php based on actual location
             if (!class_exists('WC_API_Keys')) {
-                include_once WP_PLUGIN_DIR . '/woocommerce/includes/api/class-wc-api-keys.php';
+                include_once '/usr/share/nginx/html/wp-content/mu-plugins/create-wc-api-keys.php';
             }
 
-            $key_data = WC_API_Keys::create_key($user_id, $description, $permissions);
+            // Now call the function to generate key
+            $key_data = WC_API_Keys::generate($user_id, $description, $permissions);
 
             if (is_wp_error($key_data)) {
                 return $key_data;
