@@ -13,6 +13,9 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
 
+# Maak de plugins directory aan
+RUN mkdir -p /usr/share/nginx/html/wp-content/plugins
+
 # Download en installeer WooCommerce
 RUN wget https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip \
     && unzip woocommerce.latest-stable.zip -d /usr/share/nginx/html/wp-content/plugins/ \
