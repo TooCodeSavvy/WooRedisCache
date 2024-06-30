@@ -96,7 +96,8 @@ jobs:
         docker compose exec -u root wordpress wp plugin activate woocommerce --path=/usr/share/nginx/html --allow-root
         docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --path=/usr/share/nginx/html --allow-root
         # Import products
-        docker compose exec -u root wordpress wp wc --help --allow-root
+        docker compose exec -u root wordpress wp cli update --allow-root
+        docker compose exec -u root wordpress wp wc --info --allow-root
         docker compose exec -u root wordpress wp wc product_csv import --file=/usr/share/nginx/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=true --allow-root
     # - name: Seed WooCommerce Products
     #   run: docker-compose exec phpunit php /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/seed-products.php
