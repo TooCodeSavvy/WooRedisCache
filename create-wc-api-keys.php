@@ -7,61 +7,18 @@ if (defined('WP_CLI') && WP_CLI) {
             list($user_id, $description, $permissions) = $args;
             WP_CLI::log("Gebruikers ID: $user_id, Beschrijving: $description, Permissies: $permissions");
 
-            $data = [
-                'user_id' => $user_id,
-                'description' => $description,
-                'permissions' => $permissions,
-            ];
+            $result = WP_CLI::runcommand("wc tool generate_api_key $user_id '$description' $permissions --user=admin --format=json");
 
-            $key_data = $this->create_woocommerce_api_key($data);
+            $key_data = json_decode($result, true);
 
-            if (is_wp_error($key_data)) {
-                WP_CLI::error($key_data->get_error_message());
+            if (isset($key_data['error'])) {
+                WP_CLI::error($key_data['error']);
             } else {
-                $successMessage = "API sleutel aangemaakt: Consumer Key: {$key_data['key']}, Consumer Secret: {$key_data['secret']}";
+                $successMessage = "API sleutel aangemaakt: Consumer Key: {$key_data['consumer_key']}, Consumer Secret: {$key_data['consumer_secret']}";
                 WP_CLI::success($successMessage);
-                
-                $logFile = '/usr/share/nginx/html/output.log';
-                $message = "API sleutel succesvol aangemaakt voor gebruiker $user_id.\n";
-                if (file_put_contents($logFile, $message, FILE_APPEND | LOCK_EX) === false) {
-                    WP_CLI::log("Failed to write to {$logFile}");
-                } else {
-                    WP_CLI::log("Succesvol geschreven naar {$logFile}");
-                }
             }
-        }
-
-        private function create_woocommerce_api_key($data) {
-            // Ensure WooCommerce is loaded
-            if (!class_exists('WooCommerce')) {
-                return new WP_Error('woocommerce_not_loaded', 'WooCommerce is not loaded.');
-            }
-
-            $user_id = $data['user_id'];
-            $description = $data['description'];
-            $permissions = $data['permissions'];
-
-            // Adjust path to class-wc-api-keys.php based on actual location
-            if (!class_exists('WC_API_Keys')) {
-                include_once '/usr/share/nginx/html/wp-content/mu-plugins/create-wc-api-keys.php';
-            }
-
-            // Now call the function to generate key
-            $key_data = WC_API_Keys::generate($user_id, $description, $permissions);
-
-            if (is_wp_error($key_data)) {
-                return $key_data;
-            }
-
-            return [
-                'key' => $key_data['consumer_key'],
-                'secret' => $key_data['consumer_secret'],
-            ];
         }
     }
 
-    // Hook into WordPress to ensure WooCommerce is fully loaded before adding the command
-    add_action('init', function() {
-        WP_CLI::add_command('wc-api-key', 'WC_API_Key_Command');
-    });
+    WP_CLI::add_command('wc-api-key', 'WC_API_Key_Command');
 }
