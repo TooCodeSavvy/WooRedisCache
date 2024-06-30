@@ -20,7 +20,7 @@ if (defined('WP_CLI') && WP_CLI) {
             } else {
                 $successMessage = "API sleutel aangemaakt: Consumer Key: {$key_data['consumer_key']}, Consumer Secret: {$key_data['consumer_secret']}";
                 WP_CLI::success($successMessage);
-                
+
                 $logFile = '/usr/share/nginx/html/output.log';
                 $message = "API sleutel succesvol aangemaakt voor gebruiker $user_id.\n";
                 if (file_put_contents($logFile, $message, FILE_APPEND | LOCK_EX) === false) {
