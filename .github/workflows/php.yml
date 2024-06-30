@@ -91,7 +91,7 @@ jobs:
         # Now it's safe to change ownership
         #docker compose exec -T -u root wordpress chown -R root:root /usr/share/nginx/html/wp-config.php
         docker compose exec -T -u root wordpress chown -R root:root /usr/share/nginx/html/wp-content/
-        docker compose exec -T -u root wordpress chown -R root:root /usr/share/nginx/html/create-wc-api-keys.php
+        docker compose exec -T -u root wordpress chown -R root:root usr/share/nginx/html/wp-content/mu-plugins/create-wc-api-keys.php
         docker compose exec -T -u root wordpress wp core install --path=/usr/share/nginx/html --url="http://localhost:8080" --title="Test Site" --admin_user="${{ secrets.WORDPRESS_DB_USER }}" --admin_password="${{ secrets.MYSQL_ROOT_PASSWORD }}" --admin_email="admin@example.com" --allow-root
         docker compose exec -u root wordpress wp plugin install woocommerce --path=/usr/share/nginx/html --allow-root
         docker compose exec -u root wordpress wp plugin activate woocommerce --path=/usr/share/nginx/html --allow-root
