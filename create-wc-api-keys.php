@@ -18,9 +18,12 @@ if (defined('WP_CLI') && WP_CLI) {
                 $successMessage = "API sleutel aangemaakt: Consumer Key: {$key_data['consumer_key']}, Consumer Secret: {$key_data['consumer_secret']}";
                 WP_CLI::success($successMessage);
                 
-                // Log the success message to a file
                 $logFile = '/usr/share/nginx/html/output.log';
-                file_put_contents($logFile, $successMessage . "\n", FILE_APPEND | LOCK_EX); 
+                $message = "Your log message here.\n";
+                if (file_put_contents($logFile, $message, FILE_APPEND | LOCK_EX) === false) {
+                    // Log error or take action if file writing fails
+                    error_log("Failed to write to {$logFile}");
+                }
             }
         }
     }
