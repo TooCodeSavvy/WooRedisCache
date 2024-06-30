@@ -16,10 +16,10 @@ jobs:
       db:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: exampledb
-          MYSQL_USER: exampleuser
-          MYSQL_PASSWORD: examplepass
-          MYSQL_ROOT_PASSWORD: examplepass
+          MYSQL_DATABASE: ${{ secrets.WORDPRESS_DB_NAME }}
+          MYSQL_USER: ${{ secrets.WORDPRESS_DB_USER }}
+          MYSQL_PASSWORD: ${{ secrets.WORDPRESS_DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         ports:
           - 3306:3306
         options: >-
@@ -55,10 +55,10 @@ jobs:
 
     - name: Create secret files
       run: |
-        echo "exampleuser" > wordpress_db_user.txt
-        echo "examplepass" > wordpress_db_password.txt
-        echo "exampledb" > wordpress_db_name.txt
-        echo "examplepass" > mysql_root_password.txt
+        echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
+        echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
+        echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
+        echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
 
     # - name: Build Docker images
     #   run: |
@@ -66,11 +66,11 @@ jobs:
 
     - name: Start services
       run: |
-        docker-compose -f docker-compose.github-actions.yml up -d
+        docker compose -f docker-compose.github-actions.yml up -d
 
     - name: Wait for MySQL to be ready
       run: |
-        until docker compose exec -T db mysql -u exampleuser -pexamplepass exampledb -e "SELECT 1"; do
+        until docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p${{ secrets.MYSQL_ROOT_PASSWORD }} ${{ secrets.WORDPRESS_DB_NAME }} -e "SELECT 1"; do
           echo "Waiting for MySQL to accept connections..."
           sleep 5
         done
@@ -85,10 +85,10 @@ jobs:
     - name: Install WordPress and configure WooCommerce
       run: |
         docker compose logs db
-        docker compose exec -T db mysql -u exampleuser -pexamplepass -e "SHOW GRANTS FOR 'exampleuser'@'%';"
-        docker compose exec -T -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="exampleuser" --admin_password="examplepass" --admin_email="admin@example.com" --allow-root 
+        docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p${{ secrets.MYSQL_ROOT_PASSWORD }} -e "SHOW GRANTS FOR '${{ secrets.WORDPRESS_DB_USER }}'@'%';"
+        docker compose exec -T -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="${{ secrets.WORDPRESS_DB_USER }}" --admin_password="${{ secrets.MYSQL_ROOT_PASSWORD }}" --admin_email="admin@example.com" --allow-root 
       env:
-        MYSQL_ROOT_PASSWORD: examplepass 
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }} 
     #     docker compose exec -u root phpunit wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com" --allow-root
     #     docker compose exec -u root wordpress wp plugin install woocommerce --activate --allow-root
     #     docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --allow-root
