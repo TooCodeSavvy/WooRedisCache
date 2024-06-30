@@ -84,9 +84,9 @@ services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: wordpress_db
-      MYSQL_USER: wordpress_user
-      MYSQL_PASSWORD: wordpress_password
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
       MYSQL_ROOT_PASSWORD: root_password
     volumes:
       - db_data:/var/lib/mysql
