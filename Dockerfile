@@ -12,14 +12,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
-
-# Maak de plugins directory aan
-RUN mkdir -p /usr/share/nginx/html/wp-content/plugins
-
-# Download en installeer WooCommerce
-RUN wget https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip \
-    && unzip woocommerce.latest-stable.zip -d /usr/share/nginx/html/wp-content/plugins/ \
-    && rm woocommerce.latest-stable.zip
+    
+RUN ls -l /usr/local/bin/wp    
 
 # Kopieer de plugin code naar de container
 COPY ./wp-content/plugins/CustomWooCommerceRedis /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration
