@@ -87,7 +87,6 @@ jobs:
         docker compose logs db
         docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p${{ secrets.WORDPRESS_DB_PASSWORD }} -e "SHOW GRANTS FOR '${{ secrets.WORDPRESS_DB_USER }}'@'%';"
         docker compose exec -T -u root wordpress wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="${{ secrets.WORDPRESS_DB_USER }}" --admin_password="${{ secrets.MYSQL_ROOT_PASSWORD }}" --admin_email="admin@example.com" --allow-root 
-        docker compose exec -u root phpunit wp core install --url="http://localhost:8080" --title="Test Site" --admin_user="${{ secrets.WORDPRESS_DB_USER }}" --admin_password="${{ secrets.MYSQL_ROOT_PASSWORD }}" --admin_email="admin@example.com" --allow-root 
         docker compose exec -u root wordpress wp plugin install woocommerce --activate --allow-root
         docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --allow-root
         # Import products
