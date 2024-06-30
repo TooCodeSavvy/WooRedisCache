@@ -70,8 +70,8 @@ jobs:
 
     - name: Wait for MySQL to be ready
       run: |
-        until docker compose exec db mysqladmin ping --silent; do
-          echo "Waiting for MySQL..."
+        until docker compose exec -T db mysql -u exampleuser -pexamplepass exampledb -e "SELECT 1"; do
+          echo "Waiting for MySQL to accept connections..."
           sleep 5
         done
 
