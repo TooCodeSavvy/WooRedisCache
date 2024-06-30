@@ -84,15 +84,10 @@ services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE_FILE: /run/secrets/wordpress_db_name
-      MYSQL_USER_FILE: /run/secrets/wordpress_db_user
-      MYSQL_PASSWORD_FILE: /run/secrets/wordpress_db_password
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-    secrets:
-      - wordpress_db_user
-      - wordpress_db_password
-      - wordpress_db_name
-      - mysql_root_password
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_USER: wordpress_user
+      MYSQL_PASSWORD: wordpress_password
+      MYSQL_ROOT_PASSWORD: root_password
     volumes:
       - db_data:/var/lib/mysql
     networks:
