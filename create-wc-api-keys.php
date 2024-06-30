@@ -7,7 +7,7 @@ if (defined('WP_CLI') && WP_CLI) {
             list($user_id, $description, $permissions) = $args;
             WP_CLI::log("Gebruikers ID: $user_id, Beschrijving: $description, Permissies: $permissions");
 
-            $result = WP_CLI::runcommand("wc tool generate_api_key $user_id '$description' $permissions --user=admin --format=json");
+            $result = WP_CLI::runcommand("wc tool generate_api_key $user_id '$description' $permissions --user=exampleuser --format=json");
 
             $key_data = json_decode($result, true);
 
