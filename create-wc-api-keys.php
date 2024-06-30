@@ -13,14 +13,14 @@ if (defined('WP_CLI') && WP_CLI) {
                 'permissions' => $permissions,
             ];
 
-            $key_data = WC_Auth::create_keys($data);
+            $key_data = $this->create_woocommerce_api_key($data);
 
             if (is_wp_error($key_data)) {
                 WP_CLI::error($key_data->get_error_message());
             } else {
-                $successMessage = "API sleutel aangemaakt: Consumer Key: {$key_data['consumer_key']}, Consumer Secret: {$key_data['consumer_secret']}";
+                $successMessage = "API sleutel aangemaakt: Consumer Key: {$key_data['key']}, Consumer Secret: {$key_data['secret']}";
                 WP_CLI::success($successMessage);
-
+                
                 $logFile = '/usr/share/nginx/html/output.log';
                 $message = "API sleutel succesvol aangemaakt voor gebruiker $user_id.\n";
                 if (file_put_contents($logFile, $message, FILE_APPEND | LOCK_EX) === false) {
@@ -29,6 +29,29 @@ if (defined('WP_CLI') && WP_CLI) {
                     WP_CLI::log("Succesvol geschreven naar {$logFile}");
                 }
             }
+        }
+
+        private function create_woocommerce_api_key($data) {
+            $user_id = $data['user_id'];
+            $description = $data['description'];
+            $permissions = $data['permissions'];
+
+            $key = new WC_API_Key();
+            $key->set_user_id($user_id);
+            $key->set_description($description);
+            $key->set_permissions($permissions);
+            $key->set_consumer_key(uniqid('ck_'));
+            $key->set_consumer_secret(uniqid('cs_'));
+            $key->set_trusted(false);
+            $key->set_last_access('');
+            $key->set_last_access_ip('');
+
+            $key->save();
+
+            return [
+                'key' => $key->get_consumer_key(),
+                'secret' => $key->get_consumer_secret(),
+            ];
         }
     }
 
