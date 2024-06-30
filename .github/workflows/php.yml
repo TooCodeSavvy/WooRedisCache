@@ -100,6 +100,7 @@ jobs:
         # docker compose exec -u root wordpress wp wc product --info --path=/usr/share/nginx/html --allow-root 
         # Generate WooCommerce API keys
         docker compose exec -u root wordpress php /usr/share/nginx/html/create-wc-api-keys.php generate 1 "Mijn WooCommerce API Sleutel" read_write --path=/usr/share/nginx/html --allow-root
+        docker compose exec -T -u root wordpress ls -la /usr/share/nginx/html/
         docker compose exec -u root wordpress cat /usr/share/nginx/html/output.log 
     #    docker compose exec -u root wordpress wp wc product import /usr/share/nginx/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --authors=create --path=/usr/share/nginx/html --allow-root
     # - name: Seed WooCommerce Products
