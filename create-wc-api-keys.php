@@ -32,28 +32,40 @@ if (defined('WP_CLI') && WP_CLI) {
         }
 
         private function create_woocommerce_api_key($data) {
+            // Ensure WooCommerce is loaded
+            if (!class_exists('WooCommerce')) {
+                return new WP_Error('woocommerce_not_loaded', 'WooCommerce is not loaded.');
+            }
+
             $user_id = $data['user_id'];
             $description = $data['description'];
             $permissions = $data['permissions'];
 
-            $key = new WC_API_Key();
-            $key->set_user_id($user_id);
-            $key->set_description($description);
-            $key->set_permissions($permissions);
-            $key->set_consumer_key(uniqid('ck_'));
-            $key->set_consumer_secret(uniqid('cs_'));
-            $key->set_trusted(false);
-            $key->set_last_access('');
-            $key->set_last_access_ip('');
+            // Ensure WC_API class is loaded
+            if (!class_exists('WC_API')) {
+                include_once WP_PLUGIN_DIR . '/woocommerce/includes/class-wc-api.php';
+            }
 
-            $key->save();
+            // Include WC API Keys class if not already included
+            if (!class_exists('WC_API_Keys')) {
+                include_once WP_PLUGIN_DIR . '/woocommerce/includes/api/class-wc-api-keys.php';
+            }
+
+            $key_data = WC_API_Keys::create_key($user_id, $description, $permissions);
+
+            if (is_wp_error($key_data)) {
+                return $key_data;
+            }
 
             return [
-                'key' => $key->get_consumer_key(),
-                'secret' => $key->get_consumer_secret(),
+                'key' => $key_data['consumer_key'],
+                'secret' => $key_data['consumer_secret'],
             ];
         }
     }
 
-    WP_CLI::add_command('wc-api-key', 'WC_API_Key_Command');
+    // Hook into WordPress to ensure WooCommerce is fully loaded before adding the command
+    add_action('init', function() {
+        WP_CLI::add_command('wc-api-key', 'WC_API_Key_Command');
+    });
 }
