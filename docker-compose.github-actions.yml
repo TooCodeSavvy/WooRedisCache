@@ -29,6 +29,7 @@ services:
       - "./wordpress_data/:/usr/share/nginx/html"
       - "./wp-content/plugins/CustomWooCommerceRedis:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration"
       - "./vendor/:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
+      - "create-wc-api-keys.php:/usr/share/nginx/html/create-wc-api-keys.php"
     networks:
       - app-network 
     restart: always
