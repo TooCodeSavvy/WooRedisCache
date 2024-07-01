@@ -8,7 +8,7 @@ if (defined('WP_CLI') && WP_CLI) {
             WP_CLI::log("Gebruikers ID: $user_id, Beschrijving: $description, Permissies: $permissions");
 
             if (!class_exists('WC_API_Keys')) {
-                include_once '/usr/share/nginx/html/wp-content/plugins/woocommerce/includes/class-wc-api-keys.php';
+                include_once '/usr/share/nginx/html/wp-content/mu-plugins/create-wc-api-keys.php';
             }
 
             if (!method_exists('WC_API_Keys', 'create_key')) {
