@@ -98,7 +98,7 @@ jobs:
         docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --path=/usr/share/nginx/html --allow-root
 
     - name: Clone wc-import-csv repository
-      run: git clone https://github.com/dipskakadiya/wc-import-csv.git /usr/share/nginx/html/wp-content/plugins/wc-import-csv
+      run: git clone https://github.com/dipskakadiya/wc-import-csv.git /usr/share/nginx/html/wp-content/plugins/
     
     - name: Activate wc-import-csv plugin
       run: |
