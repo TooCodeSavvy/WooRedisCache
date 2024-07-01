@@ -21,3 +21,4 @@ script_bash_docker
 wp-content/plugins/CustomWooCommerceRedis/composer.lock
 customCommerceRedis.zip
 script_bash_docker
+/wc-import-csv
