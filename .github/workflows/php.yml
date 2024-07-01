@@ -101,7 +101,9 @@ jobs:
       run: git clone https://github.com/dipskakadiya/wc-import-csv.git /usr/share/nginx/html/wp-content/plugins/wc-import-csv
     
     - name: Activate wc-import-csv plugin
-      run: docker compose exec -u root wordpress wp plugin activate wc-import-csv --path=/usr/share/nginx/html --allow-root
+      run: |
+        docker compose exec -u root wordpress ls -la /usr/share/nginx/html/wp-content/plugins/ 
+        docker compose exec -u root wordpress wp plugin activate wc-import-csv --path=/usr/share/nginx/html --allow-root
 
     - name: Import Products from CSV using wc-import-csv CLI
       run: docker compose exec -u root wordpress wp wc-product product_import_from_csv --csv=/usr/share/nginx/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --path=/usr/share/nginx/html --allow-root
