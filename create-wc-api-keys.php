@@ -7,30 +7,33 @@ if (defined('WP_CLI') && WP_CLI) {
             list($user_id, $description, $permissions) = $args;
             WP_CLI::log("Gebruikers ID: $user_id, Beschrijving: $description, Permissies: $permissions");
 
-            if (!class_exists('WC_API_Keys')) {
-                include_once '/usr/share/nginx/html/wp-content/mu-plugins/create-wc-api-keys.php';
+            // Include necessary WooCommerce files
+            if (!class_exists('WC_Data_Store')) {
+                include_once '/usr/share/nginx/html/wp-content/plugins/woocommerce/includes/class-wc-data-store.php';
+            }
+            if (!class_exists('WC_API')) {
+                include_once '/usr/share/nginx/html/wp-content/plugins/woocommerce/includes/class-wc-api.php';
             }
 
-            if (!method_exists('WC_API_Keys', 'create_key')) {
-                WP_CLI::error("Method 'create_key' does not exist in WC_API_Keys class.");
-                return;
-            }
+            // Load the API keys data store
+            $data_store = WC_Data_Store::load('api_key');
 
-            $key_data = WC_API_Keys::create_key(array(
+            // Create the API key
+            $key = $data_store->create(array(
                 'user_id' => $user_id,
                 'description' => $description,
-                'permissions' => $permissions
+                'permissions' => $permissions,
             ));
 
-            if (is_wp_error($key_data)) {
-                WP_CLI::error($key_data->get_error_message());
+            if (is_wp_error($key)) {
+                WP_CLI::error($key );
             } else {
-                $successMessage = "API sleutel aangemaakt: Consumer Key: {$key_data['consumer_key']}, Consumer Secret: {$key_data['consumer_secret']}";
+                $successMessage = "API sleutel aangemaakt: Consumer Key: {$key['consumer_key']}, Consumer Secret: {$key['consumer_secret']}";
                 WP_CLI::success($successMessage);
 
                 // Log the generated API key
                 $logFile = '/usr/share/nginx/html/output.log';
-                $message = "API sleutel succesvol aangemaakt voor gebruiker $user_id.\nConsumer Key: {$key_data['consumer_key']}\nConsumer Secret: {$key_data['consumer_secret']}\n";
+                $message = "API sleutel succesvol aangemaakt voor gebruiker $user_id.\nConsumer Key: {$key['consumer_key']}\nConsumer Secret: {$key['consumer_secret']}\n";
                 if (file_put_contents($logFile, $message, FILE_APPEND | LOCK_EX) === false) {
                     WP_CLI::log("Failed to write to {$logFile}");
                 } else {
