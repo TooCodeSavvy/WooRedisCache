@@ -99,7 +99,8 @@ jobs:
 
     - name: Clone wc-import-csv repository
       run: |
-        apt-get update && apt-get install -y git
+        docker compose exec -u root wordpress apt-get update 
+        docker compose exec -u root wordpress apt-get install -y git --allow-root
         git clone https://github.com/dipskakadiya/wc-import-csv.git /usr/share/nginx/html/wp-content/plugins/wc-import-csv
     
     - name: Activate wc-import-csv plugin
