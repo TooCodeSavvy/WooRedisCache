@@ -17,9 +17,9 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_DATABASE: ${{ secrets.WORDPRESS_DB_NAME }}
-          MYSQL_USER: root
+          MYSQL_USER: ${{ secrets.WORDPRESS_DB_USER }}
           MYSQL_PASSWORD: ${{ secrets.WORDPRESS_DB_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: rootpass
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         ports:
           - 3306:3306
         options: >-
@@ -58,7 +58,7 @@ jobs:
         echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
         echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
         echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
-        echo "rootpass" > mysql_root_password.txt
+        echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
 
     # - name: Build Docker images
     #   run: |
@@ -70,7 +70,7 @@ jobs:
 
     - name: Wait for MySQL to be ready
       run: |
-        until docker compose exec -T db mysql -u root -prootpass -e 'SELECT 1'; do
+        until docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p${{ secrets.WORDPRESS_DB_PASSWORD }} ${{ secrets.WORDPRESS_DB_NAME }} -e "SELECT 1"; do
           echo "Waiting for MySQL to accept connections..."
           sleep 5
         done
@@ -102,11 +102,8 @@ jobs:
 
     - name: Import WooCommerce DB
       run: |
-        docker compose exec -T db sh -c 'cat /tmp/exampledb.sql | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" "${WORDPRESS_DB_NAME}"'
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        WORDPRESS_DB_NAME: ${{ secrets.WORDPRESS_DB_NAME }}
-
+        docker compose exec -T db sh -c 'cat /tmp/exampledb.sql | mysql -u root -p"${{secrets.MYSQL_ROOT_PASSWORD}}" "${{secrets.WORDPRESS_DB_NAME}}"'
+      
     # - name: Clone wc-import-csv repository
     #   run: |
     #     docker compose exec -u root wordpress apt-get update 
