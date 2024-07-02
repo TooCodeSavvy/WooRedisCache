@@ -58,7 +58,7 @@ jobs:
         echo "${{ secrets.WORDPRESS_DB_USER }}" > wordpress_db_user.txt
         echo "${{ secrets.WORDPRESS_DB_PASSWORD }}" > wordpress_db_password.txt
         echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
-        echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
+        echo "rootpass" > mysql_root_password.txt
 
     # - name: Build Docker images
     #   run: |

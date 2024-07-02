@@ -22,3 +22,4 @@ wp-content/plugins/CustomWooCommerceRedis/composer.lock
 customCommerceRedis.zip
 script_bash_docker
 /wc-import-csv
+wp-content/plugins/CustomWooCommerceRedis/seed-products.php
