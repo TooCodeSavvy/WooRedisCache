@@ -97,7 +97,9 @@ jobs:
         docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --path=/usr/share/nginx/html --allow-root
 
     - name: Import WooCommerce DB
-      run: docker compose exec -u root wordpress wp db import /usr/share/nginx/db/example.db --path=/usr/share/nginx/html --allow-root --mysql=mariadb
+      run: |
+        docker compose exec -u root wordpress mariadb --version
+        docker compose exec -u root wordpress  wp db import /usr/share/nginx/db/example.db --path=/usr/share/nginx/html --allow-root --mysql=mariadb
 
     # - name: Clone wc-import-csv repository
     #   run: |
