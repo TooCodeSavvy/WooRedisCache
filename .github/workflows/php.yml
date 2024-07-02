@@ -98,8 +98,7 @@ jobs:
 
     - name: Import WooCommerce DB
       run: |
-        docker compose exec -u root wordpress mariadb --version
-        docker compose exec -u root wordpress  wp db import /usr/share/nginx/db/example.db --path=/usr/share/nginx/html --allow-root --mysql=mariadb
+        docker compose exec -u root db mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} ${{ secrets.WORDPRESS_DB_NAME }} < /tmp/exampledb.sql 
 
     # - name: Clone wc-import-csv repository
     #   run: |

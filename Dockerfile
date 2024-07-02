@@ -3,9 +3,8 @@ FROM wordpress:php8.3-fpm
 
 # Installeer vereiste pakketten
 RUN apt-get update \
-    && apt-get install -y wget unzip \
-    && apt-get install mariadb-client -y
-     
+    && apt-get install -y wget unzip
+
 # Installeer Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
