@@ -97,32 +97,35 @@ jobs:
         docker compose exec -u root wordpress wp plugin activate woocommerce --path=/usr/share/nginx/html --allow-root
         docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --path=/usr/share/nginx/html --allow-root
 
-    - name: Clone wc-import-csv repository
-      run: |
-        docker compose exec -u root wordpress apt-get update 
-        docker compose exec -u root wordpress apt-get install -y git 
-        docker compose exec -u root wordpress wp cli update --path=/usr/share/nginx/html --allow-root
-        docker compose exec -u root wordpress git clone https://github.com/TooCodeSavvy/wc-import-csv /usr/share/nginx/html/wp-content/plugins/wc-import-csv
-    
-    - name: Activate wc-import-csv plugin
-      run: |
-        docker compose exec -u root wordpress ls -la /usr/share/nginx/html/wp-content/plugins/ 
-        docker compose exec -u root wordpress ls -la /usr/share/nginx/html/wp-content/plugins/wc-import-csv 
-        docker compose exec -u root wordpress wp plugin activate wc-import-csv --path=/usr/share/nginx/html --allow-root
+    - name: Import WooCommerce DB
+      run: docker compose exec -u root wordpress wp wc import db /usr/share/nginx/db/example.db --path=/usr/share/nginx/html --allow-root
 
-    - name: Import Products from CSV using wc-import-csv CLI
-      run: docker compose exec -u root wordpress wp wc-product product_import_from_csv --csv=/usr/share/nginx/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --path=/usr/share/nginx/html --allow-root --user=${{ secrets.WORDPRESS_DB_USER }}       
+    # - name: Clone wc-import-csv repository
+    #   run: |
+    #     docker compose exec -u root wordpress apt-get update 
+    #     docker compose exec -u root wordpress apt-get install -y git 
+    #     docker compose exec -u root wordpress wp cli update --path=/usr/share/nginx/html --allow-root
+    #     docker compose exec -u root wordpress git clone https://github.com/TooCodeSavvy/wc-import-csv /usr/share/nginx/html/wp-content/plugins/wc-import-csv
+    
+    # - name: Activate wc-import-csv plugin
+    #   run: |
+    #     docker compose exec -u root wordpress ls -la /usr/share/nginx/html/wp-content/plugins/ 
+    #     docker compose exec -u root wordpress ls -la /usr/share/nginx/html/wp-content/plugins/wc-import-csv 
+    #     docker compose exec -u root wordpress wp plugin activate wc-import-csv --path=/usr/share/nginx/html --allow-root
+
+    # - name: Import Products from CSV using wc-import-csv CLI
+    #   run: docker compose exec -u root wordpress wp wc-product product_import_from_csv --csv=/usr/share/nginx/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --path=/usr/share/nginx/html --allow-root --user=${{ secrets.WORDPRESS_DB_USER }}       
     
            
-    - name: Generate WooCommerce API Keys
-      run: | 
-        # Import products
-        docker compose exec -u root wordpress wp user list --path=/usr/share/nginx/html --allow-root
-        # docker compose exec -u root wordpress wp wc product --info --path=/usr/share/nginx/html --allow-root 
-        # Generate WooCommerce API keys
-        docker compose exec -u root wordpress wp wc-api-key generate 1 "Mijn WooCommerce API Sleutel" read_write --path=/usr/share/nginx/html --allow-root
-        docker compose exec -T -u root wordpress ls -la /usr/share/nginx/html/
-        docker compose exec -u root wordpress cat /usr/share/nginx/html/output.log 
+    # - name: Generate WooCommerce API Keys
+    #   run: | 
+    #     # Import products
+    #     docker compose exec -u root wordpress wp user list --path=/usr/share/nginx/html --allow-root
+    #     # docker compose exec -u root wordpress wp wc product --info --path=/usr/share/nginx/html --allow-root 
+    #     # Generate WooCommerce API keys
+    #     docker compose exec -u root wordpress wp wc-api-key generate 1 "Mijn WooCommerce API Sleutel" read_write --path=/usr/share/nginx/html --allow-root
+    #     docker compose exec -T -u root wordpress ls -la /usr/share/nginx/html/
+    #     docker compose exec -u root wordpress cat /usr/share/nginx/html/output.log 
 
     #    docker compose exec -u root wordpress wp wc product import /usr/share/nginx/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --authors=create --path=/usr/share/nginx/html --allow-root
     # - name: Seed WooCommerce Products
