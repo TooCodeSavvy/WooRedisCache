@@ -95,11 +95,7 @@ jobs:
         docker compose exec -u root wordpress wp plugin install woocommerce --path=/usr/share/nginx/html --allow-root
         docker compose exec -u root wordpress wp plugin activate woocommerce --path=/usr/share/nginx/html --allow-root
         docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --path=/usr/share/nginx/html --allow-root
-
-    - name: Check if SQL file is mounted
-      run: |
-        docker compose exec -T db ls -l /tmp
-
+ 
     - name: Import WooCommerce DB
       run: |
         docker compose exec -T db sh -c 'cat /tmp/exampledb.sql | mysql -u exampleuser -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" "${{secrets.WORDPRESS_DB_NAME}}"'
