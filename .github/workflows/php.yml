@@ -102,7 +102,7 @@ jobs:
 
     - name: Import WooCommerce DB
       run: |
-        docker compose exec -T db sh -c 'cat /tmp/exampledb.sql | mysql -u root -p"${{secrets.MYSQL_ROOT_PASSWORD}}" "${{secrets.WORDPRESS_DB_NAME}}"'
+        docker compose exec -T db sh -c 'cat /tmp/exampledb.sql | mysql -u exampleuser -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" "${{secrets.WORDPRESS_DB_NAME}}"'
       
     # - name: Clone wc-import-csv repository
     #   run: |
