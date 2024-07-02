@@ -16,10 +16,10 @@ jobs:
       db:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: ${{ secrets.WORDPRESS_DB_NAME }}
-          MYSQL_USER: ${{ secrets.WORDPRESS_DB_USER }}
-          MYSQL_PASSWORD: ${{ secrets.WORDPRESS_DB_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: exampledb
+          MYSQL_USER: root
+          MYSQL_PASSWORD: rootpass
+          MYSQL_ROOT_PASSWORD: rootpass
         ports:
           - 3306:3306
         options: >-
@@ -68,12 +68,22 @@ jobs:
       run: |
         docker compose -f docker-compose.github-actions.yml up -d
 
-    - name: Wait for MySQL to be ready
-      run: |
-        until docker compose exec -T db mysql -u root -prootpass -e 'SELECT 1'; do
-          echo "Waiting for MySQL to accept connections..."
-          sleep 5
-        done
+        - name: Wait for MySQL to be ready
+        env:
+          MYSQL_ROOT_PASSWORD: rootpass
+        run: |
+          retries=30
+          until docker compose exec -T db mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "SELECT 1" 2>/dev/null; do
+            if [ $retries -le 0 ]; then
+              echo "MySQL is not ready after waiting, exiting..."
+              docker compose logs db
+              exit 1
+            fi
+            echo "Waiting for MySQL to accept connections..."
+            retries=$((retries - 1))
+            sleep 10
+          done
+          echo "MySQL is ready"
 
     - name: Wait for WordPress to be ready
       run: |
