@@ -21,45 +21,43 @@ class CustomPluginIntegrationTest extends TestCase {
         $this->customPlugin->getRedisClient()->flushdb(); 
     } 
 
-    public function testAddToCart() { 
-            var_dump(WC()->cart);
-            WC()->cart->empty_cart();
-            // Voeg een product toe aan de winkelwagen
-            WC()->cart->add_to_cart(34, 2);
-            WC()->cart->add_to_cart(26, 2); 
-    
-            // Synchroniseer winkelwagen met Redis
-            $this->customPluginCart->syncCartToRedis();
+    public function testAddToCart() {
 
-            // Controleer of de winkelwageninformatie in Redis is opgeslagen
-            $cartKey = $this->customPluginCart->getCartKey();
-            $cartData = $this->customPlugin->getRedisClient()->get($cartKey);
+        WC()->cart->empty_cart();
+        // Voeg een product toe aan de winkelwagen
+        WC()->cart->add_to_cart(34, 2);
+        WC()->cart->add_to_cart(26, 2); 
+ 
+        // Synchroniseer winkelwagen met Redis
+        $this->customPluginCart->syncCartToRedis();
 
-            // Debug the cart data retrieved from Redis
-            if (!empty($cartData['items'])) {
-                $keys = array_keys($cartData['items']);
+        // Controleer of de winkelwageninformatie in Redis is opgeslagen
+        $cartKey = $this->customPluginCart->getCartKey();
+        $cartData = $this->customPlugin->getRedisClient()->get($cartKey);
 
-                $firstItem = $cartData['items'][$keys[0]];
-                echo "First item:";
-                var_dump($firstItem);
+        // Debug the cart data retrieved from Redis
+        if (!empty($cartData['items'])) {
+            $keys = array_keys($cartData['items']);
 
-                $secondItem = $cartData['items'][$keys[1]];
-                echo "Second item:";
-                var_dump($secondItem);
-            } else {
-                echo "Cart is empty.";
-            }
+            // $firstItem = $cartData['items'][$keys[0]];
+            // echo "First item:";
+            // var_dump($firstItem);
 
-            var_dump($cartKey);
-            var_dump($cartData['items']);
+            // $secondItem = $cartData['items'][$keys[1]];
+            // echo "Second item:";
+            // var_dump($secondItem);
+        } else {
+            echo "Cart is empty.";
+        }
 
-            // Validatie van winkelwagengegevens in Redis
-            $this->assertNotEmpty($cartData, 'De winkelwageninformatie is niet in Redis opgeslagen');
-            $this->assertEquals(34, $cartData['items'][$keys[0]]['product_id']);
-            $this->assertEquals(2, $cartData['items'][$keys[0]]['quantity']);
-            $this->assertEquals(26, $cartData['items'][$keys[1]]['product_id']);
-            $this->assertEquals(2, $cartData['items'][$keys[1]]['quantity']);
-        
+        //var_dump($cartKey);
+
+         // Validatie van winkelwagengegevens in Redis
+        $this->assertNotEmpty($cartData, 'De winkelwageninformatie is niet in Redis opgeslagen');
+        $this->assertEquals(34, $cartData['items'][$keys[0]]['product_id']);
+        $this->assertEquals(2, $cartData['items'][$keys[0]]['quantity']);
+        $this->assertEquals(26, $cartData['items'][$keys[1]]['product_id']);
+        $this->assertEquals(2, $cartData['items'][$keys[1]]['quantity']);
     }
 
     public function testUpdateCartItem() {
