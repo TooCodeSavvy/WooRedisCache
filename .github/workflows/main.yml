@@ -22,7 +22,13 @@ jobs:
         run: sudo apt-get install zip
 
       - name: Create zip file
-        run: zip -r CustomWooCommerceRedis.zip wp-content/plugins/CustomWooCommerceRedis
+        run: |
+          zip -r CustomWooCommerceRedis.zip wp-content/plugins/CustomWooCommerceRedis \
+          -x "*tests*" \
+          -x "*phpunit.xml*" \
+          -x "*test-results*" \
+          -x "*.phpunit.result.cache" \
+          -x "*.phpunit.cache"
 
       - name: Create Release
         id: create_release
