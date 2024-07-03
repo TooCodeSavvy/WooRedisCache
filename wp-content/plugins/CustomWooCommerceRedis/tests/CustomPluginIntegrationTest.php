@@ -23,6 +23,7 @@ class CustomPluginIntegrationTest extends TestCase {
 
     public function testAddToCart() {
         if (function_exists('WC')  ) {
+            var_dump(WC());
             WC()->cart->empty_cart();
             // Voeg een product toe aan de winkelwagen
             WC()->cart->add_to_cart(34, 2);
