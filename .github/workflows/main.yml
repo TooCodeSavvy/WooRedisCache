@@ -18,7 +18,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Zorg ervoor dat alle tags worden opgehaald
+          fetch-depth: 0 # Zorg ervoor dat alle tags en branches worden opgehaald
 
       - name: Install zip
         run: sudo apt-get install zip
@@ -35,10 +35,16 @@ jobs:
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
         run: |
-          # Haal de laatste tag op en verhoog het versienummer
-          LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo "Laatste tag: $LAST_TAG"
-          NEW_TAG="v$(echo $LAST_TAG | sed 's/v//' | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')"
+          # Controleer of er tags bestaan
+          if git fetch --tags && git tag | grep -q .; then
+            LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+            echo "Laatste tag: $LAST_TAG"
+            NEW_TAG="v$(echo $LAST_TAG | sed 's/v//' | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')"
+          else
+            echo "Geen bestaande tags gevonden. Creëer initiële tag."
+            NEW_TAG="v0.1.0"
+          fi
+          
           echo "Nieuwe tag: $NEW_TAG"
           
           # Creëer de nieuwe tag
