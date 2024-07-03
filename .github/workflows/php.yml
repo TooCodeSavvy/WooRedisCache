@@ -85,6 +85,7 @@ jobs:
     - name: Install WordPress and configure WooCommerce
       run: |
         docker compose logs db
+        docker compose exec -T -u root wordpress ls -la /usr/share/nginx/html
         docker compose exec -T -u root wordpress wp core download --path=/usr/share/nginx/html --allow-root
         # Generate wp-config.php
         docker compose exec -T -u root wordpress wp config create --dbname="${{ secrets.WORDPRESS_DB_NAME }}" --dbhost=db --dbuser="${{ secrets.WORDPRESS_DB_USER }}" --dbpass="${{ secrets.WORDPRESS_DB_PASSWORD }}" --path=/usr/share/nginx/html --allow-root
