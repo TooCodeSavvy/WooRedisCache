@@ -39,18 +39,18 @@ class CustomPluginIntegrationTest extends TestCase {
         if (!empty($cartData['items'])) {
             $keys = array_keys($cartData['items']);
 
-            // $firstItem = $cartData['items'][$keys[0]];
-            // echo "First item:";
-            // var_dump($firstItem);
+            $firstItem = $cartData['items'][$keys[0]];
+            echo "First item:";
+            var_dump($firstItem);
 
-            // $secondItem = $cartData['items'][$keys[1]];
-            // echo "Second item:";
-            // var_dump($secondItem);
+            $secondItem = $cartData['items'][$keys[1]];
+            echo "Second item:";
+            var_dump($secondItem);
         } else {
             echo "Cart is empty.";
         }
 
-        //var_dump($cartKey);
+        var_dump($cartKey);
 
          // Validatie van winkelwagengegevens in Redis
         $this->assertNotEmpty($cartData, 'De winkelwageninformatie is niet in Redis opgeslagen');
