@@ -107,7 +107,7 @@ jobs:
        
     - name: Run PHPUnit tests
       run: |
-        docker compose exec -T -u root wordpress sh -c 'cd /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration && vendor/bin/phpunit --configuration phpunit.xml'
+        #docker compose exec -T -u root wordpress sh -c 'cd /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration && vendor/bin/phpunit --configuration phpunit.xml'
         docker compose -f docker-compose.github-actions.yml run phpunit
 
     - name: Shutdown services
