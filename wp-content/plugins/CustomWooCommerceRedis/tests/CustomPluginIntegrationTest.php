@@ -23,7 +23,7 @@ class CustomPluginIntegrationTest extends TestCase {
 
     public function testAddToCart() {
 
-        WC()->cart->empty_cart();
+        //WC()->cart->empty_cart();
         // Voeg een product toe aan de winkelwagen
         WC()->cart->add_to_cart(34, 2);
         WC()->cart->add_to_cart(26, 2); 
