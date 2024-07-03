@@ -104,4 +104,4 @@ jobs:
     - name: Shutdown services
       if: always()
       run: |
-        docker compose -f docker-compose.yml down
+        docker compose -f docker-compose.github-actions.yml down
