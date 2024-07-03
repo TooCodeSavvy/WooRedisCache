@@ -50,7 +50,7 @@ jobs:
           git push origin $NEW_TAG
           
           # Zet de nieuwe tag als output
-          echo "::set-output name=tag::$NEW_TAG"
+          echo "tag=$NEW_TAG" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
