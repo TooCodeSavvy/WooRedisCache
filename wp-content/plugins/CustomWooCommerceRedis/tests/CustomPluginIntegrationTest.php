@@ -51,6 +51,7 @@ class CustomPluginIntegrationTest extends TestCase {
         }
 
         var_dump($cartKey);
+        var_dump($cartData);
 
          // Validatie van winkelwagengegevens in Redis
         $this->assertNotEmpty($cartData, 'De winkelwageninformatie is niet in Redis opgeslagen');
