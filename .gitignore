@@ -15,7 +15,12 @@ wordpress_db_name.txt
 mysql_root_password.txt
 *.swp
 /home/hp/Repositories/WooRedisCache/~
-exampledb.sql
+woocommerce-docker 
 script_bash_docker
 /wp-content/plugins/CustomWooCommerceRedis/composer.lock
 wp-content/plugins/CustomWooCommerceRedis/composer.lock
+customCommerceRedis.zip
+script_bash_docker
+/wc-import-csv
+wp-content/plugins/CustomWooCommerceRedis/seed-products.php
+wordpress.zip

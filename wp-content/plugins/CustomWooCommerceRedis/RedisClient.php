@@ -30,8 +30,13 @@ if (!class_exists('CustomWooCommerceRedis\RedisClient')) {
 
         public function get(string $key) {
             $value = $this->redisConnection->get($key);
-            return $value ? unserialize($value) : null;
+            return $value ? unserialize($value) : [
+                'items' => [],
+                'subtotal' => 0,
+                'cart_count' => 0
+            ];
         }
+        
 
         public function delete(string $key): bool {
             return $this->redisConnection->del([$key]) > 0;

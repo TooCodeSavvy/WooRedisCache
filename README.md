@@ -4,7 +4,7 @@ Custom WordPress plugin om WooCommerce productgegevens en winkelwagengegevens in
 
 ## Beschrijving
 
-Deze plugin integreert Redis-caching in WooCommerce om betere prestaties te leveren door productgegevens en winkelwageninformatie op te slaan in een Redis-database. De bedoeling is om deze plugin te gebruiken bovenop bestaande PHP-code die hooks bijvoorbeeld gebruikt om de winkelwagen te updaten, op te halen etc. Het is ook bedoeld om productgegevens op te halen, alles gebeurt op PHP-niveau.
+Deze plugin integreert Redis-caching in WooCommerce om productgegevens en winkelwageninformatie op te slaan in een Redis-database. De bedoeling is om deze plugin te gebruiken bovenop bestaande PHP-code die hooks bijvoorbeeld gebruikt om de winkelwagen te updaten, op te halen etc. Het is ook bedoeld om productgegevens op te halen, alles gebeurt op PHP-niveau.
 
 ## Functies
 
@@ -48,12 +48,17 @@ public function testUpdateCartItem() {
     // Synchroniseer winkelwagen met Redis
     $this->customPlugin->syncCartToRedis();
 
-    $cartKey = $this->customPlugin->getCartKey();
-    $cartData = $this->redisClient->get($cartKey);
-    $cartData = unserialize($cartData);
+    $cartKey = $this->customPluginCart->getCartKey();
+    $cartData = $this->customPlugin->getRedisClient()->get($cartKey);
+
+    if (!empty($cartData['items'])) {
+        $keys = array_keys($cartData['items']); 
+    } else {
+        echo "Cart is empty.";
+    }
 
     // Controleer of de hoeveelheid correct is bijgewerkt
     $this->assertEquals(5, $woocommerce->cart->get_cart_contents_count(), 'Aantal producten in de winkelwagen komt niet overeen na bijwerken van de hoeveelheid.');
-    $this->assertEquals(5, $cartData[array_key_first($cartData)]['quantity']);
-    $this->assertEquals($woocommerce->cart->get_cart_contents_count(), $cartData[array_key_first($cartData)]['quantity']);
+    $this->assertEquals(5, $cartData['items'][$keys[0]]['quantity']);
+    $this->assertEquals($woocommerce->cart->get_cart_contents_count(), $cartData['items'][$keys[0]]['quantity']);
 }

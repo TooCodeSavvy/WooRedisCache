@@ -16,10 +16,10 @@ jobs:
       db:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: wordpress
-          MYSQL_USER: wordpress_user
-          MYSQL_PASSWORD: wordpress_password
-          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: ${{ secrets.WORDPRESS_DB_NAME }}
+          MYSQL_USER: ${{ secrets.WORDPRESS_DB_USER }}
+          MYSQL_PASSWORD: ${{ secrets.WORDPRESS_DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         ports:
           - 3306:3306
         options: >-
@@ -60,18 +60,14 @@ jobs:
         echo "${{ secrets.WORDPRESS_DB_NAME }}" > wordpress_db_name.txt
         echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > mysql_root_password.txt
 
-    - name: Build Docker images
-      run: |
-        docker build -t my-phpunit-tests -f wp-content/plugins/CustomWooCommerceRedis/tests/Dockerfile .
-
     - name: Start services
       run: |
-        docker compose -f docker-compose.yml up -d
+        docker compose -f docker-compose.github-actions.yml up -d
 
     - name: Wait for MySQL to be ready
       run: |
-        until docker compose exec db mysqladmin ping --silent; do
-          echo "Waiting for MySQL..."
+        until docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p${{ secrets.WORDPRESS_DB_PASSWORD }} ${{ secrets.WORDPRESS_DB_NAME }} -e "SELECT 1"; do
+          echo "Waiting for MySQL to accept connections..."
           sleep 5
         done
 
@@ -84,17 +80,28 @@ jobs:
 
     - name: Install WordPress and configure WooCommerce
       run: |
-        docker compose exec wordpress wp core install --url="http://127.0.0.1:8080" --title="Test Site" --admin_user="admin" --admin_password="password" --admin_email="admin@example.com"
-        docker compose exec wordpress wp plugin install woocommerce --activate
-        docker compose exec wordpress wp plugin activate custom-woocommerce-redis-integration
-        # Import producten
-        docker compose exec wordpress wp wc product_csv import --file=/var/www/html/wp-content/plugins/woocommerce/sample-data/sample_products.csv --update_existing=true  
-
+        docker compose logs db
+        docker compose exec -T -u root wordpress ls -la /usr/share/nginx/html
+        docker compose exec -T -u root wordpress wp core download --path=/usr/share/nginx/html --allow-root
+        # Generate wp-config.php
+        docker compose exec -T -u root wordpress wp config create --dbname="${{ secrets.WORDPRESS_DB_NAME }}" --dbhost=db --dbuser="${{ secrets.WORDPRESS_DB_USER }}" --dbpass="${{ secrets.WORDPRESS_DB_PASSWORD }}" --path=/usr/share/nginx/html --allow-root
+        # Now it's safe to change ownership
+        #docker compose exec -T -u root wordpress chown -R root:root /usr/share/nginx/html/wp-config.php
+        docker compose exec -T -u root wordpress chown -R root:root /usr/share/nginx/html/wp-content/
+        docker compose exec -T -u root wordpress wp core install --path=/usr/share/nginx/html --url="http://localhost:8080" --title="Test Site" --admin_user="${{ secrets.WORDPRESS_DB_USER }}" --admin_password="${{ secrets.MYSQL_ROOT_PASSWORD }}" --admin_email="admin@example.com" --allow-root
+        docker compose exec -u root wordpress wp plugin install woocommerce --path=/usr/share/nginx/html --allow-root
+        docker compose exec -u root wordpress wp plugin activate woocommerce --path=/usr/share/nginx/html --allow-root
+        docker compose exec -u root wordpress wp plugin activate custom-woocommerce-redis-integration --path=/usr/share/nginx/html --allow-root
+ 
+    - name: Import WooCommerce DB
+      run: |
+        docker compose exec -T db sh -c 'cat /tmp/exampledb.sql | mysql -u exampleuser -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" "${{secrets.WORDPRESS_DB_NAME}}"'
+             
     - name: Run PHPUnit tests
       run: |
-        docker compose -f docker-compose.yml run phpunit
+        docker compose -f docker-compose.github-actions.yml run phpunit
 
     - name: Shutdown services
       if: always()
       run: |
-        docker compose -f docker-compose.yml down
+        docker compose -f docker-compose.github-actions.yml down

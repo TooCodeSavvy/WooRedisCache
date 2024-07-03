@@ -14,7 +14,7 @@ services:
       - app-network
 
   wordpress:
-    image: wordpress:php8.3-fpm
+    build: .
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER_FILE: /run/secrets/wordpress_db_user
@@ -75,7 +75,6 @@ services:
       - "./wordpress_data/:/usr/share/nginx/html" 
       - "./wp-content/plugins/CustomWooCommerceRedis:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration"
       - "./vendor/:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/vendor"
-      - "./seed-products.php:/usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration/seed-products.php"
     entrypoint: /bin/bash
     command: -c "cd /usr/share/nginx/html/wp-content/plugins/custom-woocommerce-redis-integration && apt-get update && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && composer install && vendor/bin/phpunit --configuration phpunit.xml"
     networks:
@@ -87,7 +86,7 @@ services:
       MYSQL_DATABASE_FILE: /run/secrets/wordpress_db_name
       MYSQL_USER_FILE: /run/secrets/wordpress_db_user
       MYSQL_PASSWORD_FILE: /run/secrets/wordpress_db_password
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/wordpress_db_password
     secrets:
       - wordpress_db_user
       - wordpress_db_password
@@ -95,6 +94,7 @@ services:
       - mysql_root_password
     volumes:
       - db_data:/var/lib/mysql
+      - ./exampledb.sql:/tmp/exampledb.sql 
     networks:
       - app-network
 
