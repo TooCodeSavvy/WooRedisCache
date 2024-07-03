@@ -1648,7 +1648,7 @@ CREATE TABLE `wp_users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 INSERT INTO `wp_users` (`ID`, `user_login`, `user_pass`, `user_nicename`, `user_email`, `user_url`, `user_registered`, `user_activation_key`, `user_status`, `display_name`) VALUES
-(1,	'exampleuser',	'examplepass',	'admin',	'admin@example.com',	'http://localhost:8080',	'2024-06-17 15:04:15',	'',	0,	'admin');
+(1,	'exampleuser',	'examplepass',	'admin',	'admin@example.com',	'http://localhost:8080',	'2024-06-17 15:04:15',	'',	0,	'exampleuser');
 
 DROP TABLE IF EXISTS `wp_wc_admin_note_actions`;
 CREATE TABLE `wp_wc_admin_note_actions` (

@@ -98,7 +98,7 @@ jobs:
  
     - name: Check WooCommerce DB Import
       run: |
-        docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" -e "SELECT user_login, user_url FROM ${{secrets.WORDPRESS_DB_NAME}}.wp_users LIMIT 1;"
+        docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" -e "SELECT user_nicename, user_url FROM ${{secrets.WORDPRESS_DB_NAME}}.wp_users LIMIT 1;"
   
     - name: Import WooCommerce DB
       run: |
@@ -106,7 +106,7 @@ jobs:
       
     - name: Check WooCommerce DB Import
       run: |
-        docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" -e "SELECT user_login, user_url FROM ${{secrets.WORDPRESS_DB_NAME}}.wp_users LIMIT 1;"
+        docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" -e "SELECT user_nicename, user_url FROM ${{secrets.WORDPRESS_DB_NAME}}.wp_users LIMIT 1;"
   
        
     - name: Run PHPUnit tests
