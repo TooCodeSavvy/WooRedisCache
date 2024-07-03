@@ -25,7 +25,8 @@ jobs:
 
       - name: Create zip file
         run: |
-          zip -r CustomWooCommerceRedis.zip wp-content/plugins/CustomWooCommerceRedis \
+          cd wp-content/plugins
+          zip -r ../../CustomWooCommerceRedis.zip CustomWooCommerceRedis \
           -x "*tests*" \
           -x "*phpunit.xml*" \
           -x "*test-results*" \
