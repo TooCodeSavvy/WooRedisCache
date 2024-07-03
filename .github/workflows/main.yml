@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Zorg ervoor dat alle tags en branches worden opgehaald
 
       - name: Install zip
         run: sudo apt-get install zip
@@ -30,23 +32,36 @@ jobs:
           -x "*.phpunit.result.cache" \
           -x "*.phpunit.cache"
 
+      - name: Bepaal en creëer nieuwe tag
+        id: new_tag
+        run: |
+          # Controleer of er tags bestaan
+          if git fetch --tags && git tag | grep -q .; then
+            LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+            echo "Laatste tag: $LAST_TAG"
+            NEW_TAG="v$(echo $LAST_TAG | sed 's/v//' | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')"
+          else
+            echo "Geen bestaande tags gevonden. Creëer initiële tag."
+            NEW_TAG="v0.1.0"
+          fi
+          
+          echo "Nieuwe tag: $NEW_TAG"
+          
+          # Creëer de nieuwe tag
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+          
+          # Zet de nieuwe tag als output
+          echo "::set-output name=tag::$NEW_TAG"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-            tag_name: ${{ github.ref_name }}
-            release_name: Release ${{ github.ref_name }}
+            tag_name: ${{ steps.new_tag.outputs.tag }}
+            release_name: Release ${{ steps.new_tag.outputs.tag }}
             draft: false
             prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./CustomWooCommerceRedis.zip
-          asset_name: CustomWooCommerceRedis.zip
-          asset_content_type: application/zip
