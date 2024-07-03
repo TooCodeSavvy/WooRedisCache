@@ -21,9 +21,8 @@ class CustomPluginIntegrationTest extends TestCase {
         $this->customPlugin->getRedisClient()->flushdb(); 
     } 
 
-    public function testAddToCart() {
-        if (function_exists('WC')  ) {
-            var_dump(WC()->cart() );
+    public function testAddToCart() { 
+            var_dump(WC()->cart);
             WC()->cart->empty_cart();
             // Voeg een product toe aan de winkelwagen
             WC()->cart->add_to_cart(34, 2);
@@ -52,7 +51,7 @@ class CustomPluginIntegrationTest extends TestCase {
             }
 
             var_dump($cartKey);
-            var_dump($cartData);
+            var_dump($cartData['items']);
 
             // Validatie van winkelwagengegevens in Redis
             $this->assertNotEmpty($cartData, 'De winkelwageninformatie is niet in Redis opgeslagen');
@@ -60,7 +59,7 @@ class CustomPluginIntegrationTest extends TestCase {
             $this->assertEquals(2, $cartData['items'][$keys[0]]['quantity']);
             $this->assertEquals(26, $cartData['items'][$keys[1]]['product_id']);
             $this->assertEquals(2, $cartData['items'][$keys[1]]['quantity']);
-        }
+        
     }
 
     public function testUpdateCartItem() {
