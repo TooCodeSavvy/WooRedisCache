@@ -30,19 +30,20 @@ jobs:
           -x "*.phpunit.result.cache" \
           -x "*.phpunit.cache"
 
-      - name: Generate tag name
-        id: generate_tag
-        run: echo "tag=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+      - name: Generate tag name and create tag
+        run: |
+          TAG_NAME=$(date +'%Y-%m-%d-%H%M%S')
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
         env:
-          GITHUB_OUTPUT: ${{ github.output }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-            tag_name: ${{ steps.generate_tag.outputs.tag }}
-            release_name: Release ${{ steps.generate_tag.outputs.tag }}
+            tag_name: ${{ env.TAG_NAME }}
+            release_name: Release ${{ env.TAG_NAME }}
             draft: false
             prerelease: false
