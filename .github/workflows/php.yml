@@ -99,12 +99,7 @@ jobs:
     - name: Import WooCommerce DB
       run: |
         docker compose exec -T db sh -c 'cat /tmp/exampledb.sql | mysql -u exampleuser -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" "${{secrets.WORDPRESS_DB_NAME}}"'
-      
-    - name: Check WooCommerce DB Import
-      run: |
-        docker compose exec -T db mysql -u ${{ secrets.WORDPRESS_DB_USER }} -p"${{ secrets.WORDPRESS_DB_PASSWORD }}" -e "SELECT * FROM ${{secrets.WORDPRESS_DB_NAME}}.wp_woocommerce_sessions LIMIT 1;"
-  
-       
+     
     - name: Run PHPUnit tests
       run: |
         docker compose -f docker-compose.github-actions.yml run phpunit
