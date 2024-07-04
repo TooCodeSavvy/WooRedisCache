@@ -26,11 +26,10 @@ jobs:
           cd wp-content/plugins/CustomWooCommerceRedis
           composer update
           composer install --no-dev --optimize-autoloader
+          cd ../../
 
       - name: Create zip file
-        run: |
-          cd wp-content/plugins
-          zip -r WooRedisCache.zip CustomWooCommerceRedis \
+        run: zip -r WooRedisCache.zip wp-content/plugins/CustomWooCommerceRedis 
             -x "*tests*" \
             -x "*phpunit.xml*" \
             -x "*test-results*" \
