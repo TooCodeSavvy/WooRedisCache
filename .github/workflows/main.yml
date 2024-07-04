@@ -23,15 +23,22 @@ jobs:
       - name: Install zip
         run: sudo apt-get install zip
 
-      - name: Create zip file
+      - name: Verify working directory
         run: |
           echo "Current directory: $(pwd)"
-          echo "Listing contents of wp-content/plugins/CustomWooCommerceRedis:"
-          ls -la wp-content/plugins/CustomWooCommerceRedis
-          cd wp-content/plugins/CustomWooCommerceRedis
-          zip -r ../../../WooRedisCache.zip . -x "tests/*" -x "phpunit.xml" -x "test-results/*" -x "*.phpunit.result.cache" -x "*.phpunit.cache"
-          cd ../../../
-          echo "Listing contents of zip file:"
+          ls -la
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          type: 'zip'
+          filename: 'WooRedisCache.zip'
+          directory: 'wp-content/plugins/CustomWooCommerceRedis'
+          path: '.'
+          exclusions: 'tests/* phpunit.xml test-results/* *.phpunit.result.cache *.phpunit.cache'
+
+      - name: Verify zip contents
+        run: |
           unzip -l WooRedisCache.zip
 
       - name: Bepaal en creëer nieuwe tag
