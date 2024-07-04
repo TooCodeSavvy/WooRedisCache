@@ -58,8 +58,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release
-        uses: ncipollo/release-action@v1.12.0
+        uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: "WooRedisCache.zip"
           tag: ${{ steps.new_tag.outputs.tag }} # Gebruik de tag die is gegenereerd in de vorige stap
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }} # Vervang door je persoonlijke toegangstoken
+          token: ${{ secrets.GITHUB_TOKEN }} # Vervang door je persoonlijke toegangstoken
