@@ -24,6 +24,7 @@ jobs:
       - name: Install Composer dependencies
         run: |
           cd wp-content/plugins/CustomWooCommerceRedis
+          composer update
           composer install --no-dev --optimize-autoloader
 
       - name: Create zip file
