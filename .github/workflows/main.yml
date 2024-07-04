@@ -25,13 +25,12 @@ jobs:
 
       - name: Create zip file
         run: |
-          mkdir -p tmp/CustomWooCommerceRedis
-          cp -r wp-content/plugins/CustomWooCommerceRedis/* tmp/CustomWooCommerceRedis/
-          cd tmp/CustomWooCommerceRedis
-          ls -la
-          zip -r ../../WooRedisCache.zip . -x "tests/*" -x "phpunit.xml" -x "test-results/*" -x "*.phpunit.result.cache" -x "*.phpunit.cache"
-          cd ../..
-          rm -rf tmp
+          echo "Current directory: $(pwd)"
+          echo "Listing contents of wp-content/plugins/CustomWooCommerceRedis:"
+          ls -la wp-content/plugins/CustomWooCommerceRedis
+          zip -r WooRedisCache.zip wp-content/plugins/CustomWooCommerceRedis -x "wp-content/plugins/CustomWooCommerceRedis/tests/*" -x "wp-content/plugins/CustomWooCommerceRedis/phpunit.xml" -x "wp-content/plugins/CustomWooCommerceRedis/test-results/*" -x "wp-content/plugins/CustomWooCommerceRedis/*.phpunit.result.cache" -x "wp-content/plugins/CustomWooCommerceRedis/*.phpunit.cache"
+          echo "Listing contents of zip file:"
+          unzip -l WooRedisCache.zip 
 
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
