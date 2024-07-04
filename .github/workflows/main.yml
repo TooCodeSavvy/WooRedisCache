@@ -23,20 +23,32 @@ jobs:
       - name: Install zip
         run: sudo apt-get install zip
 
-      - name: Verify working directory
+      - name: Create directory for zip
+        run: mkdir -p release_files
+
+      - name: Copy plugin files
+        run: cp -r wp-content/plugins/CustomWooCommerceRedis/* release_files/
+
+      - name: Remove unwanted files
         run: |
-          echo "Current directory: $(pwd)"
-          ls -la
+          rm -rf release_files/tests
+          rm -f release_files/phpunit.xml
+          rm -f release_files/test-results/*
+          rm -f release_files/*.phpunit.result.cache
+          rm -f release_files/*.phpunit.cache
+
+      - name: Verify release files directory
+        run: |
+          echo "Release files directory: $(pwd)/release_files"
+          ls -la release_files
 
       - name: Create zip file
         run: |
-          cd wp-content/plugins/CustomWooCommerceRedis
-          zip -r ../../../WooRedisCache.zip . -x "tests/*" -x "phpunit.xml" -x "test-results/*" -x "*.phpunit.result.cache" -x "*.phpunit.cache"
-
+          cd release_files
+          zip -r ../WooRedisCache.zip .
+      
       - name: Verify zip contents
-        run: |
-          unzip -l ../../../WooRedisCache.zip
-        working-directory: wp-content/plugins/CustomWooCommerceRedis
+        run: unzip -l WooRedisCache.zip
 
       - name: Determine and create new tag
         id: new_tag
@@ -71,4 +83,4 @@ jobs:
           release_name: Release ${{ steps.new_tag.outputs.tag }}
           draft: false
           prerelease: false
-          assets: ../../../WooRedisCache.zip
+          assets: WooRedisCache.zip
