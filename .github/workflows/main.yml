@@ -1,20 +1,19 @@
-name: Create Archive and Release
+name: Release WooCommerce Redis Plugin
 
 on:
   push:
-    tags:
-      - '*'
     branches:
       - main
 
 permissions:
   contents: write
-  issues: write
+  issues: write  # Only if you need to manage issues
   pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,15 +23,11 @@ jobs:
       - name: Install zip
         run: sudo apt-get install zip
 
-      - name: Archive Release
-        uses: thedoctor0/zip-release@0.7.6
-        with:
-          type: 'zip'
-          filename: 'WooRedisCache.zip'
-          directory: 'wp-content/plugins/CustomWooCommerceRedis'
-          path: '.'
-          exclusions: 'tests/* phpunit.xml test-results/* *.phpunit.result.cache *.phpunit.cache'
-
+      - name: Create zip file
+        run: |
+          cd wp-content/plugins
+          zip -r WooRedisCache.zip CustomWooCommerceRedis -x "CustomWooCommerceRedis/tests/*" -x "CustomWooCommerceRedis/phpunit.xml" -x "CustomWooCommerceRedis/test-results/*" -x "CustomWooCommerceRedis/*.phpunit.result.cache" -x "CustomWooCommerceRedis/*.phpunit.cache"
+ 
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
         run: |
@@ -57,9 +52,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Release
-        uses: ncipollo/release-action@v1.14.0
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          artifacts: "WooRedisCache.zip"
-          tag: ${{ steps.new_tag.outputs.tag }} # Gebruik de tag die is gegenereerd in de vorige stap
-          token: ${{ secrets.GITHUB_TOKEN }} # Vervang door je persoonlijke toegangstoken
+            tag_name: ${{ steps.new_tag.outputs.tag }}
+            release_name: Release ${{ steps.new_tag.outputs.tag }}
+            draft: false
+            prerelease: false
