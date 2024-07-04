@@ -63,7 +63,6 @@ jobs:
         with:
             tag_name: ${{ steps.new_tag.outputs.tag }}
             release_name: Release ${{ steps.new_tag.outputs.tag }}
-            title: Release ${{ steps.new_tag.outputs.tag }}
             workdir: wp-content/plugins/CustomWooCommerceRedis
             draft: false
             prerelease: false
