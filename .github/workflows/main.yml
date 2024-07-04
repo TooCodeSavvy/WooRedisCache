@@ -38,7 +38,9 @@ jobs:
             -x "*test-results*" \
             -x "*.phpunit.result.cache" \
             -x "*.phpunit.cache"
-
+      
+      - name: Check
+        run: ls -la
           
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
