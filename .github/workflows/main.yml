@@ -5,6 +5,11 @@ on:
       - '*'
     branches:
       - main
+      
+permissions:
+  contents: write
+  issues: write  # Only if you need to manage issues
+  pull-requests: write
 
 jobs:
   build:
