@@ -31,4 +31,5 @@ jobs:
         uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: "WooRedisCache.zip"
+          tag: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
