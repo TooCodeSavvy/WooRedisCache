@@ -17,7 +17,7 @@ jobs:
         run: sudo apt-get install zip
 
       - name: Archive Release
-        uses: thedoctor0/zip-release@0.7.5
+        uses: thedoctor0/zip-release@0.7.6
         with:
           type: 'zip'
           filename: 'WooRedisCache.zip'
@@ -26,7 +26,7 @@ jobs:
           exclusions: 'tests/* phpunit.xml test-results/* *.phpunit.result.cache *.phpunit.cache'
 
       - name: Upload Release
-        uses: ncipollo/release-action@v1.12.0
+        uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: "WooRedisCache.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
