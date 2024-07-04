@@ -3,9 +3,7 @@ name: Release WooCommerce Redis Plugin
 on:
   push:
     branches:
-      - main
-    tags:
-      - '*'
+      - main 
 
 permissions:
   contents: write
@@ -25,14 +23,14 @@ jobs:
       - name: Install zip
         run: sudo apt-get install zip
 
-      - name: Create zip file
-        run: |
-          zip -r CustomWooCommerceRedis.zip wp-content/plugins/CustomWooCommerceRedis \
-          -x "*tests*" \
-          -x "*phpunit.xml*" \
-          -x "*test-results*" \
-          -x "*.phpunit.result.cache" \
-          -x "*.phpunit.cache"
+      - name: Archive Release
+        uses: thedoctor0/zip-release@0.7.6
+        with:
+          type: 'zip'
+          filename: 'WooRedisCache.zip'
+          directory: 'wp-content/plugins/CustomWooCommerceRedis'
+          path: '.'
+          exclusions: 'tests/* phpunit.xml test-results/* *.phpunit.result.cache *.phpunit.cache'
         
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
@@ -63,7 +61,7 @@ jobs:
         # env:
         #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-            artifacts: "CustomWooCommerceRedis.zip"
+            artifacts: "WooRedisCache.zip"
             tag: ${{ steps.new_tag.outputs.tag }}
             token: ${{ secrets.GITHUB_TOKEN }}
             # release_name: Release ${{ steps.new_tag.outputs.tag }}
