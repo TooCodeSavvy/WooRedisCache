@@ -32,10 +32,7 @@ jobs:
         run: |
           cd wp-content/plugins/CustomWooCommerceRedis
           zip -r ../../../WooRedisCache.zip . -x "*tests*" -x "*phpunit.xml*" -x "*test-results*" -x "*.phpunit.result.cache" -x "*.phpunit.cache"
-           
-      - name: Check
-        run: ls -la  wp-content/plugins/CustomWooCommerceRedis
-          
+                    
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
         run: |
