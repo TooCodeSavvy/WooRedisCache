@@ -28,14 +28,11 @@ jobs:
           echo "Current directory: $(pwd)"
           ls -la
 
-      - name: Archive Release
-        uses: thedoctor0/zip-release@0.7.5
-        with:
-          type: 'zip'
-          filename: 'WooRedisCache.zip'
-          directory: 'wp-content/plugins/CustomWooCommerceRedis'
-          path: '.'
-          exclusions: 'tests/* phpunit.xml test-results/* *.phpunit.result.cache *.phpunit.cache'
+      - name: Create zip file
+        run: |
+          cd wp-content/plugins/CustomWooCommerceRedis
+          zip -r ../../../WooRedisCache.zip . -x "tests/*" -x "phpunit.xml" -x "test-results/*" -x "*.phpunit.result.cache" -x "*.phpunit.cache"
+
 
       - name: Verify zip contents
         run: |
