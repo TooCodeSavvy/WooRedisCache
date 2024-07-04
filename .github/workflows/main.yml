@@ -17,18 +17,22 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Zorg ervoor dat alle tags en branches worden opgehaald
 
       - name: Install zip
         run: sudo apt-get install zip
 
+      - name: Install Composer dependencies
+        run: |
+          cd wp-content/plugins/CustomWooCommerceRedis
+          composer update
+          composer install --no-dev --optimize-autoloader
+          cd ../../
+
       - name: Create zip file
         run: |
-          cd wp-content/plugins
-          zip -r WooRedisCache.zip CustomWooCommerceRedis -x "CustomWooCommerceRedis/tests/*" -x "CustomWooCommerceRedis/phpunit.xml" -x "CustomWooCommerceRedis/test-results/*" -x "CustomWooCommerceRedis/*.phpunit.result.cache" -x "CustomWooCommerceRedis/*.phpunit.cache"
-        shell: /usr/bin/bash -e {0}
-
+          cd wp-content/plugins/CustomWooCommerceRedis
+          zip -r ../../../WooRedisCache.zip . -x "*tests*" -x "*phpunit.xml*" -x "*test-results*" -x "*.phpunit.result.cache" -x "*.phpunit.cache"
+                    
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
         run: |
@@ -52,8 +56,9 @@ jobs:
           echo "::set-output name=tag::$NEW_TAG"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          
       - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -62,3 +67,13 @@ jobs:
             release_name: Release ${{ steps.new_tag.outputs.tag }}
             draft: false
             prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./WooRedisCache.zip
+          asset_name: WooRedisCache.zip
+          asset_content_type: application/zip
