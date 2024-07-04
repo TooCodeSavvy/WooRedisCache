@@ -29,7 +29,7 @@ jobs:
           echo "Listing contents of wp-content/plugins/CustomWooCommerceRedis:"
           ls -la wp-content/plugins/CustomWooCommerceRedis
           cd wp-content/plugins
-          zip -r WooRedisCache.zip CustomWooCommerceRedis -x "CustomWooCommerceRedis/tests/*" -x "CustomWooCommerceRedis/phpunit.xml" -x "CustomWooCommerceRedis/test-results/*" -x "CustomWooCommerceRedis/*.phpunit.result.cache" -x "CustomWooCommerceRedis/*.phpunit.cache"
+          zip -r WooRedisCache.zip CustomWooCommerceRedis
           mv WooRedisCache.zip ../../
           echo "Listing contents of zip file:"
           unzip -l ../../WooRedisCache.zip 
