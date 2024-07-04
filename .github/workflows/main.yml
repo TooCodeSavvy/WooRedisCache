@@ -29,10 +29,13 @@ jobs:
           cd ../../
 
       - name: Create zip file
-        run: |
-          cd wp-content/plugins/CustomWooCommerceRedis
-          zip -r ../../WooRedisCache.zip . -x "*tests*" -x "*phpunit.xml*" -x "*test-results*" -x "*.phpunit.result.cache" -x "*.phpunit.cache"
- 
+        run: cd wp-content/plugins/CustomWooCommerceRedis && zip -r ../../../WooRedisCache.zip wp-content/plugins/CustomWooCommerceRedis
+          -x "*tests*" \
+          -x "*phpunit.xml*" \
+          -x "*test-results*" \
+          -x "*.phpunit.result.cache" \
+          -x "*.phpunit.cache"
+          
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
         run: |
