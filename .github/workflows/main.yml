@@ -40,7 +40,7 @@ jobs:
             -x "*.phpunit.cache"
       
       - name: Check
-        run: ls -la
+        run: ls -la  wp-content/plugins/CustomWooCommerceRedis
           
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
