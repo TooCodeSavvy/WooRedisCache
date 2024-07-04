@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  issues: write  # Only if you need to manage issues
+  issues: write  # Only if je issues nodig hebt
   pull-requests: write
 
 jobs:
@@ -33,12 +33,12 @@ jobs:
           cd wp-content/plugins/CustomWooCommerceRedis
           zip -r ../../../WooRedisCache.zip . -x "tests/*" -x "phpunit.xml" -x "test-results/*" -x "*.phpunit.result.cache" -x "*.phpunit.cache"
 
-
       - name: Verify zip contents
         run: |
-          unzip -l WooRedisCache.zip
+          unzip -l ../../../WooRedisCache.zip
+        working-directory: wp-content/plugins/CustomWooCommerceRedis
 
-      - name: Bepaal en creëer nieuwe tag
+      - name: Determine and create new tag
         id: new_tag
         run: |
           # Controleer of er tags bestaan
@@ -71,5 +71,4 @@ jobs:
           release_name: Release ${{ steps.new_tag.outputs.tag }}
           draft: false
           prerelease: false
-          assets: WooRedisCache.zip
-
+          assets: ../../../WooRedisCache.zip
