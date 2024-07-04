@@ -22,15 +22,19 @@ jobs:
         run: sudo apt-get install zip
 
       - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: |
+          cd wp-content/plugins/CustomWooCommerceRedis
+          composer install --no-dev --optimize-autoloader
 
       - name: Create zip file
-        run: zip -r WooRedisCache.zip wp-content/plugins/CustomWooCommerceRedis
-          -x "*tests*" \
-          -x "*phpunit.xml*" \
-          -x "*test-results*" \
-          -x "*.phpunit.result.cache" \
-          -x "*.phpunit.cache"
+        run: |
+          cd wp-content/plugins
+          zip -r WooRedisCache.zip CustomWooCommerceRedis \
+            -x "*tests*" \
+            -x "*phpunit.xml*" \
+            -x "*test-results*" \
+            -x "*.phpunit.result.cache" \
+            -x "*.phpunit.cache"
       
       - name: Bepaal en creëer nieuwe tag
         id: new_tag
