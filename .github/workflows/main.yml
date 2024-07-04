@@ -22,7 +22,7 @@ jobs:
         run: sudo apt-get install zip
 
       - name: Create zip file
-        run: zip -r CustomWooCommerceRedis.zip wp-content/plugins/CustomWooCommerceRedis
+        run: zip -r WooRedisCache.zip wp-content/plugins/CustomWooCommerceRedis
           -x "*tests*" \
           -x "*phpunit.xml*" \
           -x "*test-results*" \
@@ -70,6 +70,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./CustomWooCommerceRedis.zip
-          asset_name: CustomWooCommerceRedis.zip
+          asset_path: ./WooRedisCache.zip
+          asset_name: WooRedisCache.zip
           asset_content_type: application/zip
